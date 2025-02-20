@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { signOut } from "firebase/auth";
-import { auth, db } from "../firebase/firebaseConfig";
+import { auth, db } from "../../firebase/firebaseConfig";
 import { useNavigate, Outlet, NavLink } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 
-function SidebarLayout() {
+function SidebarStudent() {
   const navigate = useNavigate();
   const [role, setRole] = useState("");
   const [name, setName] = useState("");
@@ -34,7 +34,7 @@ function SidebarLayout() {
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
       <div className="w-64 bg-blue-900 text-white p-6 flex flex-col">
-        <h2 className="text-2xl font-bold mb-4">Dashboard</h2>
+        <h2 className="text-2xl font-bold mb-4">Student Dashboard</h2>
         
         {/* User Info */}
         <p className="text-sm text-gray-200 border-l-4 border-blue-400 pl-3 py-2 rounded-md mb-4">
@@ -91,4 +91,4 @@ function SidebarLayout() {
   );
 }
 
-export default SidebarLayout;
+export default SidebarStudent;
