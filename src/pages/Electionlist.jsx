@@ -17,12 +17,13 @@ const ElectionList = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-4">Upcoming Elections</h2>
+      <h2 className="text-2xl font-bold mb-4">Elections</h2>
       <ul className="space-y-3">
         {elections.map((election) => (
           <li key={election.id} className="p-4 bg-gray-100 rounded-lg shadow-md">
             <Link to={`/election/${election.id}`} className="text-blue-500 hover:underline text-lg">
-              {election.name} - {election.status}
+              {election.name} - {<br></br>}
+              {election.status}
             </Link>
           </li>
         ))}

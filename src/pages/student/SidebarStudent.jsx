@@ -64,6 +64,14 @@ function SidebarStudent() {
             Student Info
           </li>
         )}
+        {role === "student" && (
+          <li
+            onClick={() => navigate("/dashboard/election-list")}
+            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
+          >
+            Elections
+          </li>
+        )}
 
         {/* Settings - Only visible to "admin" role */}
         {role === "admin" && (
