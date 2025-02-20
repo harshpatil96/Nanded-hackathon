@@ -5,6 +5,9 @@ import { auth } from "./firebase/firebaseConfig"; // Firebase config
 import Login from "./login/Login";
 import SidebarLayout from "./components/SidebarLayout"; // Sidebar
 import StudentInfo from "./pages/StudentInfo";
+import ElectionList from "./pages/Electionlist";
+import ElectionDetails from "./pages/ElectionDetails";
+
 
 // Placeholder components for other pages
 function HomePage() {
@@ -49,6 +52,9 @@ function App() {
             <Routes>
               <Route path="/dashboard/home" element={<HomePage />} />
               <Route path="/dashboard/student-info" element={<StudentInfo />} />
+              <Route path="/dashboard/election-list" element={<ElectionList />} />
+              <Route path="/election/:electionId" element={<ElectionDetails />} />
+              
               <Route path="/dashboard/settings" element={<SettingsPage />} />
               <Route path="/" element={<Navigate to="/dashboard/home" />} />
             </Routes>
