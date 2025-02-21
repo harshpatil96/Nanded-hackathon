@@ -41,97 +41,121 @@ function SidebarStudent() {
           <span className="font-semibold text-blue-300 tracking-wide">Hello, {name}</span> ({role})
         </p>
 
-        {/* Sidebar Links */}
-        <ul className="space-y-4">
-          <li>
-            <NavLink
-              to="/dashboard/home"
-              className={({ isActive }) =>
-                `block p-3 rounded-lg cursor-pointer transition ${isActive ? "bg-blue-700" : "hover:bg-blue-700"
-                }`
-              }
-            >
-              Home
-            </NavLink>
-          </li>
-          {/* Student Info - Only visible to "student" role */}
-         
-            <li
-              onClick={() => navigate("/dashboard/student-info")}
-              className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
-            >
-              Student Info
+        {/* Sidebar Links with Scroll */}
+        <div className="flex-1 overflow-y-auto">
+          <ul className="space-y-2">
+            <li>
+              <NavLink
+                to="/dashboard/home"
+                className={({ isActive }) =>
+                  `block p-3 rounded-lg cursor-pointer transition ${
+                    isActive ? "bg-blue-700" : "hover:bg-blue-700"
+                  }`
+                }
+              >
+                Home
+              </NavLink>
             </li>
-         
-          
-            <li
-              onClick={() => navigate("/dashboard/election-list")}
-              className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
-            >
-              Elections
+            <li>
+              <NavLink
+                to="/dashboard/student-info"
+                className={({ isActive }) =>
+                  `block p-3 rounded-lg cursor-pointer transition ${
+                    isActive ? "bg-blue-700" : "hover:bg-blue-700"
+                  }`
+                }
+              >
+                Student Info
+              </NavLink>
             </li>
-        
-        
-            <li
-              onClick={() => navigate("/dashboard/budget-track")}
-              className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
-            >
-              Budget Tracking
+            <li>
+              <NavLink
+                to="/dashboard/election-list"
+                className={({ isActive }) =>
+                  `block p-3 rounded-lg cursor-pointer transition ${
+                    isActive ? "bg-blue-700" : "hover:bg-blue-700"
+                  }`
+                }
+              >
+                Elections
+              </NavLink>
             </li>
-        
-            <li
-              onClick={() => navigate("/dashboard/complaints")}
-              className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
-            >
-              Complaints Posting
+            <li>
+              <NavLink
+                to="/dashboard/budget-track"
+                className={({ isActive }) =>
+                  `block p-3 rounded-lg cursor-pointer transition ${
+                    isActive ? "bg-blue-700" : "hover:bg-blue-700"
+                  }`
+                }
+              >
+                Budget Tracking
+              </NavLink>
             </li>
-        
+            <li>
+              <NavLink
+                to="/dashboard/complaints"
+                className={({ isActive }) =>
+                  `block p-3 rounded-lg cursor-pointer transition ${
+                    isActive ? "bg-blue-700" : "hover:bg-blue-700"
+                  }`
+                }
+              >
+                Complaints Posting
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/dashboard/settings"
+                className={({ isActive }) =>
+                  `block p-3 rounded-lg cursor-pointer transition ${
+                    isActive ? "bg-blue-700" : "hover:bg-blue-700"
+                  }`
+                }
+              >
+                Settings
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/dashboard/campusPlaces"
+                className={({ isActive }) =>
+                  `block p-3 rounded-lg cursor-pointer transition ${
+                    isActive ? "bg-blue-700" : "hover:bg-blue-700"
+                  }`
+                }
+              >
+                Campus Places Booking
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/dashboard/CheatingRecStd"
+                className={({ isActive }) =>
+                  `block p-3 rounded-lg cursor-pointer transition ${
+                    isActive ? "bg-blue-700" : "hover:bg-blue-700"
+                  }`
+                }
+              >
+                Cheating Records
+              </NavLink>
+            </li>
+          </ul>
+        </div>
 
-          {/* Settings - Only visible to "admin" role */}
-         
-            <li
-              onClick={() => navigate("/dashboard/settings")}
-              className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
-            >
-              Settings
-            </li>
-       
-        
-          <li
-            onClick={() => navigate("/dashboard/student-info")}
-            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
-          >
-            Student Info
-          </li>
-        
-
-        {/* Settings - Only visible to "admin" role */}
-        
-          <li
-            onClick={() => navigate("/dashboard/campusPlaces")}
-            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
-          >
-            Campus Places Booking
-          </li>
-
-          <li
-            onClick={() => navigate("/dashboard/CheatingRecStd")}
-            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
-          >
-            Cheating Records
-          </li>
-        
-          <li
+        {/* Logout Button */}
+        <div className="mt-4">
+          <button
             onClick={handleLogout}
-            className="p-3 rounded-lg cursor-pointer bg-red-600 hover:bg-red-800 transition text-center"
+            className="w-full p-3 rounded-lg cursor-pointer bg-red-600 hover:bg-red-800 transition text-center"
           >
             Logout
-          </li>
-        </ul>
+          </button>
+        </div>
       </div>
 
       {/* Main Content (This will change dynamically) */}
-      <div className="flex-1 p-6 overflow-y-auto">
+      <div className="flex-1 p-6 overflow-y-auto h-screen">
         <Outlet />
       </div>
     </div>

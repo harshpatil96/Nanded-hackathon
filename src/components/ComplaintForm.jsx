@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../firebase/firebaseConfig"; // Import Firebase config
 import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 const ComplaintForm = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -41,16 +42,26 @@ const ComplaintForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-
+  
     try {
-      // Add complaint to Firestore with Base64 image
+      const auth = getAuth();
+      const user = auth.currentUser;
+  
+      if (!user) {
+        alert("You must be logged in to submit a complaint.");
+        return;
+      }
+  
       await addDoc(collection(db, "complaints"), {
         text: complaintText,
         timestamp: serverTimestamp(),
         status: "Pending",
-        imageUrl: image || "", // Store Base64 string if available
+        imageUrl: image || "",
+        userId: user.uid, // Store User ID
+        userName: user.displayName || "Anonymous", // Store Name
+        userEmail: user.email, // Store Email
       });
-
+  
       alert("Complaint submitted successfully!");
       setComplaintText("");
       setImage(null);
