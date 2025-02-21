@@ -35,7 +35,7 @@ function SidebarStudent() {
       {/* Sidebar */}
       <div className="w-64 bg-blue-900 text-white p-6 flex flex-col">
         <h2 className="text-2xl font-bold mb-4">Student Dashboard</h2>
-        
+
         {/* User Info */}
         <p className="text-sm text-gray-200 border-l-4 border-blue-400 pl-3 py-2 rounded-md mb-4">
           <span className="font-semibold text-blue-300 tracking-wide">Hello, {name}</span> ({role})
@@ -47,8 +47,7 @@ function SidebarStudent() {
             <NavLink
               to="/dashboard/home"
               className={({ isActive }) =>
-                `block p-3 rounded-lg cursor-pointer transition ${
-                  isActive ? "bg-blue-700" : "hover:bg-blue-700"
+                `block p-3 rounded-lg cursor-pointer transition ${isActive ? "bg-blue-700" : "hover:bg-blue-700"
                 }`
               }
             >
@@ -56,32 +55,48 @@ function SidebarStudent() {
             </NavLink>
           </li>
           {/* Student Info - Only visible to "student" role */}
-        {role === "student" && (
-          <li
-            onClick={() => navigate("/dashboard/student-info")}
-            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
-          >
-            Student Info
-          </li>
-        )}
-        {role === "student" && (
-          <li
-            onClick={() => navigate("/dashboard/election-list")}
-            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
-          >
-            Elections
-          </li>
-        )}
+          {role === "student" && (
+            <li
+              onClick={() => navigate("/dashboard/student-info")}
+              className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
+            >
+              Student Info
+            </li>
+          )}
+          {role === "student" && (
+            <li
+              onClick={() => navigate("/dashboard/election-list")}
+              className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
+            >
+              Elections
+            </li>
+          )}
+          {role === "student" && (
+            <li
+              onClick={() => navigate("/dashboard/budget-track")}
+              className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
+            >
+              Budget Tracking
+            </li>
+          )}
+          {(role === "student" || role === "admin" || role === "faculty") && (
+            <li
+              onClick={() => navigate("/dashboard/complaints")}
+              className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
+            >
+              Complaints Posting
+            </li>
+          )}
 
-        {/* Settings - Only visible to "admin" role */}
-        {role === "admin" && (
-          <li
-            onClick={() => navigate("/dashboard/settings")}
-            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
-          >
-            Settings
-          </li>
-        )}
+          {/* Settings - Only visible to "admin" role */}
+          {role === "admin" && (
+            <li
+              onClick={() => navigate("/dashboard/settings")}
+              className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
+            >
+              Settings
+            </li>
+          )}
           <li
             onClick={handleLogout}
             className="p-3 rounded-lg cursor-pointer bg-red-600 hover:bg-red-800 transition text-center"
