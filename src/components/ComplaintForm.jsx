@@ -1,7 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../firebase/firebaseConfig"; // Import Firebase config
-import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
+import {
+  collection,
+  addDoc,
+  query,
+  orderBy,
+  onSnapshot,
+  serverTimestamp,
+  updateDoc,
+  deleteDoc,
+  doc,
+  getDoc,
+} from "firebase/firestore";
+import { Filter } from "bad-words";
+
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const ComplaintForm = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -10,8 +23,10 @@ const ComplaintForm = () => {
   const [complaints, setComplaints] = useState([]);
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
-
-  // Fetch complaints from Firestore in real-time
+  const [userRole, setUserRole] = useState("");
+  const auth = getAuth();
+  const filter = new Filter();
+  // console.log(filter.list);
   useEffect(() => {
     const q = query(collection(db, "complaints"), orderBy("timestamp", "desc"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -25,30 +40,42 @@ const ComplaintForm = () => {
     return () => unsubscribe();
   }, []);
 
-  // Handle image selection and convert to Base64
+  useEffect(() => {
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+          setUserRole(userDoc.data().role); // Fetch and set user role
+        }
+      }
+    });
+  }, []);
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => {
-        setImage(reader.result); // Store Base64 string
-        setImagePreview(reader.result); // Preview image
+        setImage(reader.result);
+        setImagePreview(reader.result);
       };
     }
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
   
     try {
-      const auth = getAuth();
       const user = auth.currentUser;
-  
       if (!user) {
         alert("You must be logged in to submit a complaint.");
+        return;
+      }
+  
+      if (filter.isProfane(complaintText)) {
+        alert("Your complaint contains inappropriate content. Please modify it.");
         return;
       }
   
@@ -57,9 +84,10 @@ const ComplaintForm = () => {
         timestamp: serverTimestamp(),
         status: "Pending",
         imageUrl: image || "",
-        userId: user.uid, // Store User ID
-        userName: user.displayName || "Anonymous", // Store Name
-        userEmail: user.email, // Store Email
+        userId: user.uid,
+        userName: user.displayName || "Anonymous",
+        userEmail: user.email,
+        anonymous: true, // Mark as anonymous
       });
   
       alert("Complaint submitted successfully!");
@@ -72,6 +100,23 @@ const ComplaintForm = () => {
       alert("Failed to submit complaint. Please try again.");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+  const handleResolve = async (id) => {
+    try {
+      await updateDoc(doc(db, "complaints", id), { status: "Resolved" });
+      alert("Complaint marked as resolved.");
+    } catch (error) {
+      console.error("Error updating complaint:", error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteDoc(doc(db, "complaints", id));
+      alert("Complaint deleted successfully.");
+    } catch (error) {
+      console.error("Error deleting complaint:", error);
     }
   };
 
@@ -97,7 +142,6 @@ const ComplaintForm = () => {
               required
             />
 
-            {/* Image Upload */}
             <div className="mt-4">
               <label className="block font-medium mb-2">Upload Image (Optional)</label>
               <input
@@ -108,7 +152,6 @@ const ComplaintForm = () => {
               />
             </div>
 
-            {/* Image Preview */}
             {imagePreview && (
               <div className="mt-3">
                 <p className="text-sm text-gray-600">Image Preview:</p>
@@ -136,7 +179,6 @@ const ComplaintForm = () => {
         </div>
       )}
 
-      {/* Display Complaints */}
       <h2 className="mt-6 text-xl font-semibold">Submitted Complaints</h2>
       <div className="mt-4 space-y-4">
         {complaints.length > 0 ? (
@@ -153,6 +195,24 @@ const ComplaintForm = () => {
                 <span>Status: <span className="font-medium">{complaint.status}</span></span>
                 <span>{complaint.timestamp?.toDate().toLocaleString()}</span>
               </div>
+
+              {(userRole === "admin" || userRole === "faculty" || userRole === "hod") && complaint.status === "Pending" && (
+                <button
+                  onClick={() => handleResolve(complaint.id)}
+                  className="mt-3 px-4 py-1 bg-green-500 text-white rounded-md hover:bg-green-600"
+                >
+                  Mark as Resolved
+                </button>
+              )}
+
+              {userRole === "admin" && complaint.status === "Resolved" && (
+                <button
+                  onClick={() => handleDelete(complaint.id)}
+                  className="mt-3 ml-2 px-4 py-1 bg-red-500 text-white rounded-md hover:bg-red-600"
+                >
+                  Delete
+                </button>
+              )}
             </div>
           ))
         ) : (
