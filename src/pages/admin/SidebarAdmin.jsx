@@ -55,33 +55,8 @@ function SidebarAdmin() {
               Home
             </NavLink>
           </li>
-          {/* Student Info - Only visible to "student" role */}
-        {role === "student" && (
-          <li
-            onClick={() => navigate("/dashboard/student-info")}
-            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
-          >
-            Student Info
-          </li>
-        )}
-        {role === "student" && (
-          <li
-            onClick={() => navigate("/dashboard/election-list")}
-            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
-          >
-            Elections
-          </li>
-        )}
-
-        {/* Settings - Only visible to "admin" role */}
-        {role === "admin" && (
-          <li
-            onClick={() => navigate("/dashboard/settings")}
-            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
-          >
-            Settings
-          </li>
-        )}
+        
+        
           <li
             onClick={handleLogout}
             className="p-3 rounded-lg cursor-pointer bg-red-600 hover:bg-red-800 transition text-center"

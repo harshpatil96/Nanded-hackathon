@@ -6,20 +6,23 @@ import { auth, db } from "./firebase/firebaseConfig"; // Firebase config
 import Login from "./components/Login";
 import SidebarStudent from "./pages/student/SidebarStudent";
 import SidebarAdmin from "./pages/admin/SidebarAdmin";
-import StudentInfo from "./pages/StudentInfo";
 import ElectionList from "./pages/Electionlist";
 import ElectionDetails from "./pages/ElectionDetails";
 import BudgetDashboard from "./pages/BudgetDashboard";
 import ComplaintForm from "./components/ComplaintForm.jsx";
+import StudentInfo from "./pages/student/StudentInfo";
+import CampusPlaces from "./pages/student/CampusPlaces";
+import CampusPlacesReq from "./pages/hod/CampusPlacesReq";
+import SidebarHod from "./pages/hod/SidebarHod";
+import CheatingRecordsForm from "./pages/faculty/CheatingRecordsForm";
+import SidebarFac from "./pages/faculty/SidebarFac";
+import CheatingRecStd from "./pages/student/CheatingRecStd";
 
 // Placeholder components for other pages
 function HomePage() {
   return <h1 className="text-3xl font-bold text-center mt-10">Welcome to Home Page</h1>;
 }
 
-function SettingsPage() {
-  return <h1 className="text-3xl font-bold text-center mt-10">Settings Page</h1>;
-}
 
 function App() {
   const [user, setUser] = useState(null);
@@ -58,6 +61,8 @@ function App() {
           {/* Conditionally render the sidebar based on role */}
           {role === "student" && <SidebarStudent />}
           {role === "admin" && <SidebarAdmin />}
+          {role === "HOD" && <SidebarHod />}
+          {role === "faculty" && <SidebarFac />}
 
           {/* Main content changes dynamically */}
           <div className="flex-1 p-6 overflow-y-auto">
@@ -69,7 +74,11 @@ function App() {
               <Route path="/dashboard/budget-track" element={<BudgetDashboard />} />
               <Route path="/dashboard/complaints" element={<ComplaintForm />} />
               
-              <Route path="/dashboard/settings" element={<SettingsPage />} />
+             
+              <Route path="/dashboard/campusPlaces" element={<CampusPlaces />} />
+              <Route path="/dashboard/CampusPlacesReq" element={<CampusPlacesReq />} />
+              <Route path="/dashboard/Cheating" element={<CheatingRecordsForm />} />
+              <Route path="/dashboard/CheatingRecStd" element={<CheatingRecStd />} />
               <Route path="/" element={<Navigate to="/dashboard/home" />} />
             </Routes>
           </div>
