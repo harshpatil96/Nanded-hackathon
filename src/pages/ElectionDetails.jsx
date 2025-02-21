@@ -4,6 +4,7 @@ import { db, auth, storage } from "../firebase/firebaseConfig.js"; // Import Fir
 import { doc, getDoc, collection, query, where, getDocs, updateDoc, arrayUnion, addDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"; // For profile photo upload
 
+
 const ElectionDetails = () => {
     const { electionId } = useParams();
     const [election, setElection] = useState(null);
@@ -105,7 +106,7 @@ const ElectionDetails = () => {
 
             await addDoc(collection(db, "candidates"), candidateData);
             alert("Application submitted successfully!");
-            setShowForm(false); 
+            setShowForm(false);
 
             // Refresh Candidate List
             setCandidates([...candidates, candidateData]);
@@ -115,24 +116,30 @@ const ElectionDetails = () => {
     };
 
     return (
-        <div className="container mx-auto p-4">
-            <h1 className="text-3xl font-bold">{election?.name}</h1>
-            <p className="text-lg text-gray-600">Role: {election?.role}</p>
-            <p className="text-lg text-gray-600">Voting Date: {election?.votingDate}</p>
-            <p className="text-lg text-gray-600">
-                Voting Time: {election?.votingTime?.start} - {election?.votingTime?.end}
-            </p>
+        <div className="container mx-auto p-6 bg-gray-50 min-h-screen">
+            {/* Election Details */}
+            <div className="bg-white p-6 rounded-lg shadow-lg mb-6">
+                <h1 className="text-4xl font-bold text-blue-800 mb-2">{election?.name}</h1>
+                <p className="text-lg text-gray-700 mb-1">Role: {election?.role}</p>
+                <p className="text-lg text-gray-700 mb-1">Voting Date: {election?.votingDate}</p>
+                <p className="text-lg text-gray-700">
+                    Voting Time: {election?.votingTime?.start} - {election?.votingTime?.end}
+                </p>
+            </div>
 
-            <div className="mt-4 flex gap-4">
-                <button 
-                    className="bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded"
+            {/* Buttons */}
+            <div className="flex gap-4 mb-6">
+                <button
+                    className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg shadow-md transition-transform transform hover:scale-105"
                     onClick={() => setShowForm(true)}
                 >
                     Apply Now
                 </button>
 
-                <button 
-                    className="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                <button
+                    className={`bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg shadow-md transition-transform transform hover:scale-105 ${
+                        userVote ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
                     disabled={userVote !== null}
                     onClick={() => alert("Redirecting to voting section...")}
                 >
@@ -140,29 +147,42 @@ const ElectionDetails = () => {
                 </button>
             </div>
 
+            {/* Application Form */}
             {showForm && (
-                <form onSubmit={handleApplyNow} className="mt-6 p-4 border rounded shadow-md">
-                    <h2 className="text-xl font-bold mb-4">Candidate Application Form</h2>
-                    <input type="text" name="name" placeholder="Full Name" required className="w-full p-2 border mb-2" onChange={handleInputChange} />
-                    <input type="text" name="rollNumber" placeholder="Roll Number / Student ID" required className="w-full p-2 border mb-2" onChange={handleInputChange} />
-                    <input type="email" name="email" placeholder="College Email ID" required className="w-full p-2 border mb-2" onChange={handleInputChange} />
-                    <input type="text" name="mobile" placeholder="Mobile Number" required className="w-full p-2 border mb-2" onChange={handleInputChange} />
-                    <input type="text" name="courseYear" placeholder="Course & Year" required className="w-full p-2 border mb-2" onChange={handleInputChange} />
-                    <input type="text" name="branch" placeholder="Branch/Department" className="w-full p-2 border mb-2" onChange={handleInputChange} />
-                    <input type="text" name="cgpa" placeholder="Current CGPA/Percentage" required className="w-full p-2 border mb-2" onChange={handleInputChange} />
-                    <input type="file" name="profilePhoto" accept="image/*" required className="w-full p-2 border mb-2" onChange={handleFileChange} />
-                    <textarea name="whyApply" placeholder="Why do you want to apply?" required className="w-full p-2 border mb-2" onChange={handleInputChange} />
-                    <textarea name="goals" placeholder="Your goals if elected?" required className="w-full p-2 border mb-2" onChange={handleInputChange} />
-                    <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded">Submit</button>
+                <form onSubmit={handleApplyNow} className="bg-white p-6 rounded-lg shadow-lg mb-6 animate-fade-in">
+                    <h2 className="text-2xl font-bold text-blue-800 mb-4">Candidate Application Form</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input type="text" name="name" placeholder="Full Name" required className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleInputChange} />
+                        <input type="text" name="rollNumber" placeholder="Roll Number / Student ID" required className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleInputChange} />
+                        <input type="email" name="email" placeholder="College Email ID" required className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleInputChange} />
+                        <input type="text" name="mobile" placeholder="Mobile Number" required className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleInputChange} />
+                        <input type="text" name="courseYear" placeholder="Course & Year" required className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleInputChange} />
+                        <input type="text" name="branch" placeholder="Branch/Department" className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleInputChange} />
+                        <input type="text" name="cgpa" placeholder="Current CGPA/Percentage" required className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleInputChange} />
+                        <input type="file" name="profilePhoto" accept="image/*" required className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleFileChange} />
+                    </div>
+                    <textarea name="whyApply" placeholder="Why do you want to apply?" required className="w-full p-3 border rounded-lg mt-4 focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleInputChange} />
+                    <textarea name="goals" placeholder="Your goals if elected?" required className="w-full p-3 border rounded-lg mt-4 focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={handleInputChange} />
+                    <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg mt-4 shadow-md transition-transform transform hover:scale-105">
+                        Submit
+                    </button>
                 </form>
             )}
 
-            <h2 className="text-2xl font-semibold mt-6">Candidates</h2>
-            <div className="mt-4">
+         
+
+            {/* Candidates Section */}
+            <h2 className="text-3xl font-bold text-blue-800 mb-6">Candidates</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {candidates.map(candidate => (
-                    <div key={candidate.id} className="border p-4 rounded-lg shadow-md mb-4">
-                        <h3 className="text-xl font-bold">{candidate.name}</h3>
-                        <p>{candidate.whyApply}</p>
+                    <div key={candidate.id} className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 animate-fade-in">
+                        <div className="flex items-center space-x-4 mb-4">
+                            {candidate.profilePhotoURL && (
+                                <img src={candidate.profilePhotoURL} alt={candidate.name} className="w-16 h-16 rounded-full object-cover" />
+                            )}
+                            <h3 className="text-2xl font-bold text-blue-800">{candidate.name}</h3>
+                        </div>
+                        <p className="text-gray-700">{candidate.whyApply}</p>
                     </div>
                 ))}
             </div>

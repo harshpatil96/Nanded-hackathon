@@ -9,7 +9,7 @@ import SidebarAdmin from "./pages/admin/SidebarAdmin";
 import StudentInfo from "./pages/StudentInfo";
 import ElectionList from "./pages/Electionlist";
 import ElectionDetails from "./pages/ElectionDetails";
-
+import ContestElections from "./pages/admin/ContestElections";
 
 // Placeholder components for other pages
 function HomePage() {
@@ -65,8 +65,8 @@ function App() {
               <Route path="/dashboard/student-info" element={<StudentInfo />} />
               <Route path="/dashboard/election-list" element={<ElectionList />} />
               <Route path="/election/:electionId" element={<ElectionDetails />} />
-              
-              <Route path="/dashboard/settings" element={<SettingsPage />} />
+              <Route path="/election/:electionId" element={<ElectionDetails />} />
+              <Route path="/contestelections" element={<ContestElections />} />
               <Route path="/" element={<Navigate to="/dashboard/home" />} />
             </Routes>
           </div>

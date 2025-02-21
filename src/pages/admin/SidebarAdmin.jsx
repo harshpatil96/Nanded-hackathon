@@ -82,6 +82,14 @@ function SidebarAdmin() {
             Settings
           </li>
         )}
+        {role === "admin" && (
+          <li
+            onClick={() => navigate("/contestelections")}
+            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
+          >
+            Schedule Elections
+          </li>
+        )}
           <li
             onClick={handleLogout}
             className="p-3 rounded-lg cursor-pointer bg-red-600 hover:bg-red-800 transition text-center"
