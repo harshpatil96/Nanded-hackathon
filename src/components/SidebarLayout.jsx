@@ -64,6 +64,14 @@ function SidebarLayout() {
             Student Info
           </li>
         )}
+        {role === "student" && (
+          <li
+            onClick={() => navigate("/dashboard/booking-sys")}
+            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
+          >
+            Booking System
+          </li>
+        )}
 
         {/* Settings - Only visible to "admin" role */}
         {role === "admin" && (

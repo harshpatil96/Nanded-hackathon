@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { auth, db } from "../firebase/firebaseConfig";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
-
+import { onAuthStateChanged } from "firebase/auth";
 const storage = getStorage();
 
 function StudentInfo() {
@@ -11,19 +11,25 @@ function StudentInfo() {
   const [showModal, setShowModal] = useState(false); // For confirmation modal
 
   useEffect(() => {
-    const fetchStudentInfo = async () => {
-      const user = auth.currentUser;
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const userRef = doc(db, "users", user.email); // Using email instead of UID
+        console.log("Current user email:", user.email);
+        
+        const userRef = doc(db, "users", user.email.toLowerCase()); // Ensure lowercase
         const userSnap = await getDoc(userRef);
+  
         if (userSnap.exists()) {
+          console.log("User data from Firestore:", userSnap.data());
           setStudent(userSnap.data());
+        } else {
+          console.log("User not found in Firestore. Check Firestore users collection.");
         }
       }
-    };
-
-    fetchStudentInfo();
+    });
+  
+    return () => unsubscribe();
   }, []);
+  
 
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];

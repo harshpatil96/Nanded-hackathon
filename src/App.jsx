@@ -5,6 +5,8 @@ import { auth } from "./firebase/firebaseConfig"; // Firebase config
 import Login from "./login/Login";
 import SidebarLayout from "./components/SidebarLayout"; // Sidebar
 import StudentInfo from "./pages/StudentInfo";
+import StudentDashboard from "./pages/StudentDashboard";
+import AcademicIntegrity from "./pages/AcademicIntigrity";
 
 // Placeholder components for other pages
 function HomePage() {
@@ -49,6 +51,9 @@ function App() {
             <Routes>
               <Route path="/dashboard/home" element={<HomePage />} />
               <Route path="/dashboard/student-info" element={<StudentInfo />} />
+              <Route path="/dashboard/booking-sys" element={<StudentDashboard/>} />
+              <Route path="/dashboard/Academic-Intigrity" element={<AcademicIntegrity/>} />
+
               <Route path="/dashboard/settings" element={<SettingsPage />} />
               <Route path="/" element={<Navigate to="/dashboard/home" />} />
             </Routes>
