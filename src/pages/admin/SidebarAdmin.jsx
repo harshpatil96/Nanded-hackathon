@@ -56,6 +56,12 @@ function SidebarAdmin() {
             </NavLink>
           </li>
         
+          <li
+            onClick={() => navigate("/dashboard/ContestElections")}
+            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
+          >
+            Elections
+          </li>
         
           <li
             onClick={handleLogout}
