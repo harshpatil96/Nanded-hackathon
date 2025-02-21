@@ -56,24 +56,31 @@ function SidebarStudent() {
             </NavLink>
           </li>
           {/* Student Info - Only visible to "student" role */}
-        {role === "student" && (
+        
           <li
             onClick={() => navigate("/dashboard/student-info")}
             className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
           >
             Student Info
           </li>
-        )}
+        
 
         {/* Settings - Only visible to "admin" role */}
-        {role === "admin" && (
+        
           <li
-            onClick={() => navigate("/dashboard/settings")}
+            onClick={() => navigate("/dashboard/campusPlaces")}
             className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
           >
-            Settings
+            Campus Places Booking
           </li>
-        )}
+
+          <li
+            onClick={() => navigate("/dashboard/CheatingRecStd")}
+            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
+          >
+            Cheating Records
+          </li>
+        
           <li
             onClick={handleLogout}
             className="p-3 rounded-lg cursor-pointer bg-red-600 hover:bg-red-800 transition text-center"
