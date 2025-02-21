@@ -1,13 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { db, storage } from "../firebase/firebaseConfig"; // Import Firebase config
+import { db } from "../firebase/firebaseConfig"; // Import Firebase config
 import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "firebase/firestore";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-
-
-
-const containsProfanity = (text) => {
-  return filter.isProfane(text);
-};
 
 const ComplaintForm = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -31,53 +24,31 @@ const ComplaintForm = () => {
     return () => unsubscribe();
   }, []);
 
-  // Handle image selection
+  // Handle image selection and convert to Base64
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImage(file);
-      setImagePreview(URL.createObjectURL(file));
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        setImage(reader.result); // Store Base64 string
+        setImagePreview(reader.result); // Preview image
+      };
     }
-  };
-
-  // Upload image to Firebase Storage and return URL
-  const uploadImage = async (file) => {
-    return new Promise((resolve, reject) => {
-      const storageRef = ref(storage, `complaints/${file.name}`);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-
-      uploadTask.on(
-        "state_changed",
-        null,
-        (error) => reject(error),
-        async () => {
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          resolve(downloadURL);
-        }
-      );
-    });
   };
 
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    let imageUrl = "";
-    
-    
-    try {
-      // Upload image if selected
-      if (image) {
-        imageUrl = await uploadImage(image);
-      }
 
-      // Add complaint to Firestore
+    try {
+      // Add complaint to Firestore with Base64 image
       await addDoc(collection(db, "complaints"), {
         text: complaintText,
-        timestamp: serverTimestamp(), // Fix timestamp issue
+        timestamp: serverTimestamp(),
         status: "Pending",
-        imageUrl,
+        imageUrl: image || "", // Store Base64 string if available
       });
 
       alert("Complaint submitted successfully!");
