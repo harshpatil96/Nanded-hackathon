@@ -66,7 +66,7 @@ function SidebarStudent() {
         )}
         {role === "student" && (
           <li
-            onClick={() => navigate("/dashboard/election-list")}
+            onClick={() => navigate("/dashboard/candidate-application")}
             className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
           >
             Elections

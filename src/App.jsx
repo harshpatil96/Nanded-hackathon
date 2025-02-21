@@ -7,9 +7,9 @@ import Login from "./components/Login";
 import SidebarStudent from "./pages/student/SidebarStudent";
 import SidebarAdmin from "./pages/admin/SidebarAdmin";
 import StudentInfo from "./pages/StudentInfo";
-import ElectionList from "./pages/Electionlist";
-import ElectionDetails from "./pages/ElectionDetails";
+
 import ContestElections from "./pages/admin/ContestElections";
+import CandidateApplication from "./pages/student/CandidateApplication";
 
 // Placeholder components for other pages
 function HomePage() {
@@ -63,11 +63,10 @@ function App() {
             <Routes>
               <Route path="/dashboard/home" element={<HomePage />} />
               <Route path="/dashboard/student-info" element={<StudentInfo />} />
-              <Route path="/dashboard/election-list" element={<ElectionList />} />
-              <Route path="/election/:electionId" element={<ElectionDetails />} />
-              <Route path="/election/:electionId" element={<ElectionDetails />} />
-              <Route path="/contestelections" element={<ContestElections />} />
+             <Route path="/contestelections" element={<ContestElections />} />
               <Route path="/" element={<Navigate to="/dashboard/home" />} />
+              <Route path="/dashboard/candidate-application" element={<CandidateApplication />} />
+
             </Routes>
           </div>
         </div>
