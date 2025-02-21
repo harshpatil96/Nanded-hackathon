@@ -13,6 +13,8 @@ import SidebarHod from "./pages/hod/SidebarHod";
 import CheatingRecordsForm from "./pages/faculty/CheatingRecordsForm";
 import SidebarFac from "./pages/faculty/SidebarFac";
 import CheatingRecStd from "./pages/student/CheatingRecStd";
+import ContestElections from "./pages/admin/ContestElections";
+import CandidateApplication from "./pages/student/CandidateApplication";
 
 
 // Placeholder components for other pages
@@ -70,6 +72,8 @@ function App() {
               <Route path="/dashboard/CampusPlacesReq" element={<CampusPlacesReq />} />
               <Route path="/dashboard/Cheating" element={<CheatingRecordsForm />} />
               <Route path="/dashboard/CheatingRecStd" element={<CheatingRecStd />} />
+              <Route path="/dashboard/ContestElections" element={<ContestElections />} />
+              <Route path="/dashboard/CandidateApplication" element={<CandidateApplication />} />
               <Route path="/" element={<Navigate to="/dashboard/home" />} />
             </Routes>
           </div>
