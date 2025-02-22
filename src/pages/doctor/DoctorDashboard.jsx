@@ -6,6 +6,12 @@ const DoctorDashboard = () => {
   const [appointments, setAppointments] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [selectedAppointment, setSelectedAppointment] = useState(null); // Track selected appointment for approval
+  const [leaveDetails, setLeaveDetails] = useState({
+    description: "", // What happened
+    leaveFrom: "", // Leave start date
+    leaveTo: "", // Leave end date
+  });
 
   // Fetch all appointment requests
   const fetchAppointments = async () => {
@@ -31,17 +37,31 @@ const DoctorDashboard = () => {
     fetchAppointments();
   }, []);
 
-  // Handle leave approval
-  const handleApproveLeave = async (appointmentId, fromDate, toDate) => {
+  // Handle leave approval form submission
+  const handleApproveLeave = async (e) => {
+    e.preventDefault();
+
+    if (!leaveDetails.description || !leaveDetails.leaveFrom || !leaveDetails.leaveTo) {
+      setError("Please fill all fields.");
+      return;
+    }
+
     try {
-      await updateDoc(doc(db, "DoctorAppointment", appointmentId), {
+      // Update the appointment in Firestore
+      await updateDoc(doc(db, "DoctorAppointment", selectedAppointment.id), {
         status: "approved",
-        leaveFrom: fromDate,
-        leaveTo: toDate,
+        description: leaveDetails.description, // Add what happened
+        leaveFrom: leaveDetails.leaveFrom, // Leave start date
+        leaveTo: leaveDetails.leaveTo, // Leave end date
       });
 
       alert("Leave approved successfully!");
+      setSelectedAppointment(null); // Close the form
+      setLeaveDetails({ description: "", leaveFrom: "", leaveTo: "" }); // Reset form
       fetchAppointments(); // Refresh the list
+
+      // TODO: Send email notifications to the class coordinator and student
+      // You can use Firebase Cloud Functions for this.
     } catch (err) {
       console.error("Error approving leave:", err);
       setError("Failed to approve leave. Please try again.");
@@ -64,7 +84,7 @@ const DoctorDashboard = () => {
               {appointment.status === "pending" && (
                 <div className="mt-2">
                   <button
-                    onClick={() => handleApproveLeave(appointment.id, "2023-10-01", "2023-10-05")} // Replace with actual dates
+                    onClick={() => setSelectedAppointment(appointment)} // Open form for this appointment
                     className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
                   >
                     Approve Leave
@@ -73,6 +93,75 @@ const DoctorDashboard = () => {
               )}
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Leave Approval Form */}
+      {selectedAppointment && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+            <h3 className="text-xl font-bold mb-4">Approve Leave for {selectedAppointment.studentName}</h3>
+            <form onSubmit={handleApproveLeave} className="space-y-4">
+              {/* What Happened */}
+              <div>
+                <label className="block text-gray-700 font-medium mb-2">What Happened?</label>
+                <textarea
+                  value={leaveDetails.description}
+                  onChange={(e) =>
+                    setLeaveDetails({ ...leaveDetails, description: e.target.value })
+                  }
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter details"
+                  required
+                />
+              </div>
+
+              {/* Leave Start Date */}
+              <div>
+                <label className="block text-gray-700 font-medium mb-2">Leave From</label>
+                <input
+                  type="date"
+                  value={leaveDetails.leaveFrom}
+                  onChange={(e) =>
+                    setLeaveDetails({ ...leaveDetails, leaveFrom: e.target.value })
+                  }
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+
+              {/* Leave End Date */}
+              <div>
+                <label className="block text-gray-700 font-medium mb-2">Leave To</label>
+                <input
+                  type="date"
+                  value={leaveDetails.leaveTo}
+                  onChange={(e) =>
+                    setLeaveDetails({ ...leaveDetails, leaveTo: e.target.value })
+                  }
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg shadow-md transition-transform transform hover:scale-105"
+              >
+                Approve Leave
+              </button>
+
+              {/* Cancel Button */}
+              <button
+                type="button"
+                onClick={() => setSelectedAppointment(null)} // Close the form
+                className="w-full bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 rounded-lg shadow-md transition-transform transform hover:scale-105"
+              >
+                Cancel
+              </button>
+            </form>
+          </div>
         </div>
       )}
     </div>
