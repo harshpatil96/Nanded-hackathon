@@ -1,21 +1,57 @@
 import React, { useEffect, useState } from "react";
 import { getBudgets, deleteBudget } from "../firebase/budgetServices";
+import { onAuthStateChanged } from "firebase/auth";
+import { db, auth } from "../firebase/firebaseConfig.js";
+import { doc, getDoc } from "firebase/firestore";
 
 const BudgetTable = () => {
   const [budgets, setBudgets] = useState([]);
+  const [role, setRole] = useState(""); // Fix: Ensure correct state name
 
   useEffect(() => {
     fetchBudgets();
   }, []);
 
+  useEffect(() => {
+    const fetchUserRole = async (userId) => {
+      if (!userId) return;
+      try {
+        const userDoc = await getDoc(doc(db, "users", userId));
+        if (userDoc.exists()) {
+          setRole(userDoc.data().role); // Fix: Properly setting the role
+        }
+      } catch (error) {
+        console.error("Error fetching user role:", error);
+      }
+    };
+
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        fetchUserRole(user.uid);
+      } else {
+        setRole(""); // Reset role if no user is logged in
+      }
+    });
+
+    return () => unsubscribe(); // Cleanup subscription
+  }, []);
+
   const fetchBudgets = async () => {
-    const data = await getBudgets();
-    setBudgets(data);
+    try {
+      const data = await getBudgets();
+      setBudgets(data);
+    } catch (error) {
+      console.error("Error fetching budgets:", error);
+    }
   };
 
   const handleDelete = async (id) => {
-    await deleteBudget(id);
-    fetchBudgets();
+    try {
+      await deleteBudget(id);
+      fetchBudgets();
+    } catch (error) {
+      console.error("Error deleting budget:", error);
+    }
   };
 
   return (
@@ -30,7 +66,9 @@ const BudgetTable = () => {
               <th className="py-3 px-4 border">Allocated (₹)</th>
               <th className="py-3 px-4 border">Spent (₹)</th>
               <th className="py-3 px-4 border">Balance (₹)</th>
+              {(role === "admin" || role === "faculty" || role === "hod") && (
               <th className="py-3 px-4 border">Action</th>
+            )}
             </tr>
           </thead>
           <tbody>
@@ -43,14 +81,19 @@ const BudgetTable = () => {
                   <td className="py-3 px-4 border font-medium text-green-600">
                     ₹{budget.allocated - budget.spent}
                   </td>
+                  {(role === "admin" || role === "hod") && (
                   <td className="py-3 px-4 border">
-                    <button
-                      onClick={() => handleDelete(budget.id)}
-                      className="bg-red-500 hover:bg-red-700 text-white px-3 py-1 rounded transition-all"
-                    >
-                      Delete
-                    </button>
+                    {/* Fix: Only show delete button if user is admin, faculty, or HOD */}
+                   
+                      <button
+                        onClick={() => handleDelete(budget.id)}
+                        className="bg-red-500 hover:bg-red-700 text-white px-3 py-1 rounded transition-all"
+                      >
+                        Delete
+                      </button>
+                   
                   </td>
+                   )}
                 </tr>
               ))
             ) : (

@@ -1,12 +1,25 @@
 import { useEffect, useState } from "react";
 import { auth, db } from "../../firebase/firebaseConfig";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, getDocs, updateDoc, collection, query, orderBy, limit } from "firebase/firestore";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  User, 
+  Mail, 
+  Building2, 
+  GraduationCap, 
+  Calendar, 
+  Users, 
+  Phone,
+  Upload,
+  Trash2,
+  Loader2
+} from "lucide-react";
 
 function StudentInfo() {
   const [student, setStudent] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [updates, setUpdates] = useState([]);
 
-  // Fetch student info from Firestore
   useEffect(() => {
     const fetchStudentInfo = async () => {
       const user = auth.currentUser;
@@ -24,7 +37,18 @@ function StudentInfo() {
     fetchStudentInfo();
   }, []);
 
-  // Handle profile picture upload
+  useEffect(() => {
+    const fetchUpdates = async () => {
+      const updatesRef = collection(db, "updates");
+      const updatesQuery = query(updatesRef, orderBy("timestamp", "desc"), limit(5));
+      const updatesSnap = await getDocs(updatesQuery);
+      const updatesList = updatesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setUpdates(updatesList);
+    };
+
+    fetchUpdates();
+  }, []);
+
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
     if (!file || !student) {
@@ -35,15 +59,10 @@ function StudentInfo() {
     setUploading(true);
 
     try {
-      // Convert image to Base64
       const base64 = await convertToBase64(file);
-
-      // Store in Firestore
       await updateDoc(doc(db, "users", student.uid), {
         profilePicture: base64,
       });
-
-      // Update state
       setStudent((prev) => ({ ...prev, profilePicture: base64 }));
       console.log("Profile picture updated successfully in Firestore.");
     } catch (error) {
@@ -53,7 +72,6 @@ function StudentInfo() {
     setUploading(false);
   };
 
-  // Handle profile picture removal
   const handleRemoveProfilePicture = async () => {
     if (!student) return;
 
@@ -68,7 +86,6 @@ function StudentInfo() {
     }
   };
 
-  // Convert image to Base64
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -79,59 +96,184 @@ function StudentInfo() {
   };
 
   if (!student) {
-    return <p className="text-center text-gray-600 mt-6">Loading student information...</p>;
+    return (
+      <div className="min-h-[400px] flex items-center justify-center">
+        <motion.div
+          animate={{ rotate: 10 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+        >
+          <Loader2 size={40} className="text-blue-600" />
+        </motion.div>
+      </div>
+    );
   }
 
+  const infoItems = [
+    { icon: User, label: "Name", value: student.displayName },
+    { icon: Mail, label: "Email", value: student.email },
+    { icon: Building2, label: "Department", value: student.department },
+    { icon: GraduationCap, label: "Year of Study", value: student.yos },
+    { icon: Calendar, label: "Date of Birth", value: student.dob },
+    { icon: Users, label: "Parent Email", value: student.parent_email },
+    { icon: Phone, label: "Contact", value: student.contact }
+  ];
+
   return (
-    <div className="max-w-lg mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg border border-gray-200">
-      <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">Student Information</h2>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12 px-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-4xl mx-auto"
+      >
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          {/* Header Section */}
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-8 text-white">
+            <h2 className="text-3xl font-bold text-center">Student Profile</h2>
+          </div>
 
-      {/* Profile Picture Section */}
-      <div className="flex flex-col items-center">
-        <img
-          src={student.profilePicture || "/default-avatar.png"}
-          alt="Profile"
-          className="w-32 h-32 rounded-full border-4 border-gray-300 object-cover shadow-md"
-        />
-      </div>
+          <div className="p-8">
+            {/* Profile Picture Section */}
+            <motion.div 
+              className="flex flex-col items-center -mt-20 mb-8"
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                className="relative"
+              >
+                <img
+                  src={student.profilePicture || "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=400&h=400&fit=crop"}
+                  alt="Profile"
+                  className="w-32 h-32 rounded-full border-4 border-white object-cover shadow-lg"
+                />
+                <AnimatePresence>
+                  {uploading && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center"
+                    >
+                      <Loader2 className="w-8 h-8 text-white animate-spin" />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
 
-      {/* Upload and Remove Section */}
-      <div className="mt-6 flex flex-col items-center">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Upload Profile Picture
-        </label>
-        <input
-          type="file"
-          className="block w-full text-sm text-gray-500
-            file:mr-4 file:py-2 file:px-4
-            file:rounded-full file:border-0
-            file:text-sm file:font-semibold
-            file:bg-blue-50 file:text-blue-700
-            hover:file:bg-blue-100"
-          onChange={handleImageUpload}
-          accept="image/*"
-        />
-        {uploading && <p className="text-sm text-gray-500 mt-2">Uploading...</p>}
-        {student.profilePicture && (
-          <button
-            onClick={handleRemoveProfilePicture}
-            className="mt-4 bg-red-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-red-600"
-          >
-            Remove Profile Picture
-          </button>
-        )}
-      </div>
+              {/* Upload Controls */}
+              <div className="mt-6 flex flex-col items-center gap-4">
+                <label className="relative cursor-pointer">
+                  <motion.div
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="bg-blue-50 text-blue-700 px-6 py-3 rounded-xl flex items-center gap-2 hover:bg-blue-100 transition-colors"
+                  >
+                    <Upload size={20} />
+                    <span>Upload New Picture</span>
+                  </motion.div>
+                  <input
+                    type="file"
+                    className="hidden"
+                    onChange={handleImageUpload}
+                    accept="image/*"
+                  />
+                </label>
 
-      {/* Student Info */}
-      <div className="mt-6 space-y-4 text-lg">
-        <p><span className="font-semibold text-gray-700">Name:</span> {student.displayName}</p>
-        <p><span className="font-semibold text-gray-700">Email:</span> {student.email}</p>
-        <p><span className="font-semibold text-gray-700">Department:</span> {student.department}</p>
-        <p><span className="font-semibold text-gray-700">Year of Study:</span> {student.yos}</p>
-        <p><span className="font-semibold text-gray-700">Date of Birth:</span> {student.dob}</p>
-        <p><span className="font-semibold text-gray-700">Parent Email:</span> {student.parent_email}</p>
-        <p><span className="font-semibold text-gray-700">Contact:</span> {student.contact}</p>
-      </div>
+                {student.profilePicture && (
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleRemoveProfilePicture}
+                    className="text-red-600 px-6 py-3 rounded-xl flex items-center gap-2 hover:bg-red-50 transition-colors"
+                  >
+                    <Trash2 size={20} />
+                    Remove Picture
+                  </motion.button>
+                )}
+              </div>
+            </motion.div>
+
+            {/* Student Info Grid */}
+            <motion.div 
+              className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8"
+              variants={{
+                hidden: { opacity: 0 },
+                show: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.1
+                  }
+                }
+              }}
+              initial="hidden"
+              animate="show"
+            >
+              {infoItems.map((item, index) => (
+                <motion.div
+                  key={index}
+                  variants={{
+                    hidden: { opacity: 0, x: -20 },
+                    show: { opacity: 1, x: 0 }
+                  }}
+                  className="bg-gray-50 p-4 rounded-xl flex items-center gap-4"
+                >
+                  <div className="bg-white p-2 rounded-lg shadow-sm">
+                    <item.icon className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">{item.label}</p>
+                    <p className="text-lg font-medium text-gray-900">{item.value}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+
+            {/* Updates Section */}
+            <AnimatePresence>
+              {updates.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="mt-12 bg-amber-50 border-l-4 border-amber-500 p-6 rounded-r-xl"
+                >
+                  <h3 className="text-lg font-bold text-amber-900 flex items-center gap-2">
+                    <span className="text-2xl">📢</span> Important Updates
+                  </h3>
+                  <motion.ul
+                    variants={{
+                      hidden: { opacity: 0 },
+                      show: {
+                        opacity: 1,
+                        transition: { staggerChildren: 0.1 }
+                      }
+                    }}
+                    initial="hidden"
+                    animate="show"
+                    className="mt-4 space-y-2"
+                  >
+                    {updates.map(update => (
+                      <motion.li
+                        key={update.id}
+                        variants={{
+                          hidden: { opacity: 0, x: -20 },
+                          show: { opacity: 1, x: 0 }
+                        }}
+                        className="text-amber-800"
+                      >
+                        {update.message}
+                      </motion.li>
+                    ))}
+                  </motion.ul>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 }
