@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { auth, db } from "../../firebase/firebaseConfig";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc,getDocs, updateDoc,collection,query, orderBy,limit } from "firebase/firestore";
 
 function StudentInfo() {
   const [student, setStudent] = useState(null);
   const [uploading, setUploading] = useState(false);
-
+  const [updates, setUpdates] = useState([]);
   // Fetch student info from Firestore
   useEffect(() => {
     const fetchStudentInfo = async () => {
@@ -23,6 +23,19 @@ function StudentInfo() {
 
     fetchStudentInfo();
   }, []);
+
+  useEffect(() => {
+    const fetchUpdates = async () => {
+      const updatesRef = collection(db, "updates");
+      const updatesQuery = query(updatesRef, orderBy("timestamp", "desc"), limit(5));
+      const updatesSnap = await getDocs(updatesQuery);
+      const updatesList = updatesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setUpdates(updatesList);
+    };
+
+    fetchUpdates();
+  }, []);
+
 
   // Handle profile picture upload
   const handleImageUpload = async (event) => {
@@ -83,6 +96,8 @@ function StudentInfo() {
   }
 
   return (
+    <>
+    
     <div className="max-w-lg mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg border border-gray-200">
       <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">Student Information</h2>
 
@@ -132,7 +147,22 @@ function StudentInfo() {
         <p><span className="font-semibold text-gray-700">Parent Email:</span> {student.parent_email}</p>
         <p><span className="font-semibold text-gray-700">Contact:</span> {student.contact}</p>
       </div>
+      
     </div>
+    {/* <div className="mt-10 p-4 bg-yellow-300 border-l-8 border-yellow-600 shadow-md animate-pulse rounded-lg">
+        <h3 className="text-lg font-bold text-yellow-900">📢 Important Updates</h3>
+        <ul className="mt-2 text-yellow-800 text-sm list-disc pl-4">
+          {updates.length > 0 ? (
+            updates.map(update => (
+              <li key={update.id}>{update.message}</li>
+            ))
+          ) : (
+            <li>No new updates available.</li>
+          )}
+        </ul>
+      </div> */}
+      
+    </>
   );
 }
 

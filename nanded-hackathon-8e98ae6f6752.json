@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "nanded-hackathon",
+  "private_key_id": "8e98ae6f6752581f2132c3062906efe3afdba621",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDIcmvLwWNXEIQW\nboOfWLMEJQFYoWRR7K1ndBRXoWP5N4yWzgIwb9klfJs8hey77sFrvStqxWyNjsLt\n9UpeNdLszx3rUghU7M/sYm1b1Ocn/2GxD62isxuJiWGWHInd98s7GNoJVA9r/h7U\nH+RPH2mdXTCdfZDl6RTLPo4sxrT4/CCx7eHUX2EBZECM02R48Vr7SzVeT7wNEyix\nb7LopX8zltpw8BtZ6fq6IxsC3jDlitlM0G3XNn/DBYjU1PO8NikmdGuOi4/g/Jal\nXh7BxmgKca7elQg/5zAupxpohxxx9wzyWvXT09JxCHd0kei8aKu3DclNrJCg6nbf\nl+dLuUT7AgMBAAECggEAT/eB9MhCmu3eXFqbjRskU+91cYf1j092QHMJWIps6XRV\nVKZ8Lhm5DiD/h25AaxtNs+9EnnSDoZfGQYudrycW7l2UqJhR9ZuCOeJskXnG/GiA\nb1R7Z5C/2CdkNLBO+ixMuldoSNdtzZ4Ua3kLqtsz1dFjPzlkcKyDnK/opYlikn/C\nE6fzf7vcIHfQyp6CCRAHQXG0+hoMMkEk92EVIBlxdMzPD9Jqssy/PEe6UpCVOBPt\nNqbwuAP1y6ApBHiXgQyC/zOCliBSkQcq33Yic5Y8MgpDpDDclrRXGxiAMNvkVTgC\n81IH7p1pfV4j4nGLUq1oLN+dOoL+NM4o8zWmFimBpQKBgQD3WOtpK/H10rNKSPZs\nltncKU3nPy0/Qa7hZsQfP7N5jQzC2yH5WXphX23Dmtdt9XaM/D5VSPnUXavHgLt/\ncnZBvaAlkb0dNJQM3NfbhzFS4X5Byog6GQO6M3Z0xAJZbZ32mFpiK53Td0tnGQ4Z\niUyoZ1Kc0KF4yUhPAYsiMYLSTwKBgQDPdX4Q7mweJ8s3B9qXpenYTwVGrpt2MnKE\nkhfC8M2zUoloeGbm/fCOSPE6sfoBZTO9fgaLu1gSjoxWAQ7Ob43NFVVTWfUaM0Cu\n9vg+o7DWoTBt67qq78dOwzY3LEoomyz1/OV6CpxYFD4Sh8SDUb/N4xVYp/JoL/Kp\npfMGijcTlQKBgHnTgwdnDKKuJ36EF1N+rUlB0sv+EvQgDtmX+ysE/gn1Tf6/Xalp\nx9wj23VHU6omB0EDkFQDQIG3rT7zCeaI4vQYSMOYV5QF7JG1SGAo40NWKxCOh7BN\n18cjR8nVLO8NDYuCmKnXn8Gi9TGPZqFvPaGIWmlAXPeX9BRtxzCNQEkDAoGALidB\naJriSsMnnpKMuvgaUhkiX1sxEtaeS4gE6UWRPbe7AhbnLbSI896ebCR0LiNJo3qK\nEkQXj+lOp0OM+7gtn9aDKQv2T2Hfng0rpSPdj6JEl++9k5HMkWU0hom/5dC/6+nb\nU49QwPef55d0zJI/TZqbgSG7+BnSrpNQwb+2CRECgYAwz2vWY39j7MBOHb3Pfz0E\nRrfi5JUpzvTnF1OxQ52WiCiM0PrIrGQkNMt9ac0CVpOcpLkEAb7EIPtCvUsMru8U\ncQADrM6A/16KIB3dsDHxXHtKdoB82lrsIo4HsMuNVyIR/+Z/wi85F5XuFS9jQeAA\n72tbtcFeBszpsyvgW5PDRA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "erp-system@nanded-hackathon.iam.gserviceaccount.com",
+  "client_id": "114275756931640465540",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/erp-system%40nanded-hackathon.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
