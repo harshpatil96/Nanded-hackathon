@@ -22,6 +22,7 @@ import StudentAppointment from "./pages/student/StudentAppointment.jsx";
 import DoctorDashboard from "./pages/doctor/DoctorDashboard.jsx";
 import SidebarDoc from "./pages/doctor/SidebarDoc.jsx";
 import Voting from "./pages/student/Voting";
+import LeaveApplication from "./pages/faculty/LeaveApplication.jsx";
 
 // Placeholder components for other pages
 function HomePage() {
@@ -91,6 +92,7 @@ function App() {
               <Route path="/" element={<Navigate to="/dashboard/home" />} />
               <Route path="/dashboard/StudentAppointment" element={<StudentAppointment />} />
               <Route path="/dashboard/DoctorDashboard" element={<DoctorDashboard />} />
+              <Route path="/dashboard/LeaveApplication" element={<LeaveApplication/>} />
             </Routes>
           </div>
         </div>

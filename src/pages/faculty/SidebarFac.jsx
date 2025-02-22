@@ -67,6 +67,13 @@ function SidebarFac() {
           >
             Cheating Records
           </li>
+
+          <li
+            onClick={() => navigate("/dashboard/LeaveApplication")}
+            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
+          >
+            Leave Applications 
+          </li>
         
           <li
             onClick={handleLogout}
