@@ -17,7 +17,7 @@ const CampusPlaces = () => {
   const [timeTo, setTimeTo] = useState("12:00 PM");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+  const [userRole, setUserRole] = useState("");
   // Fetch the logged-in user's information
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -37,6 +37,17 @@ const CampusPlaces = () => {
 
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          if (userDoc.exists()) {
+            setUserRole(userDoc.data().role);
+          }
+        }
+      });
+    }, []);
 
   // Convert 12-hour time to 24-hour format
   const convertTo24HourFormat = (time12h) => {
@@ -118,6 +129,7 @@ const CampusPlaces = () => {
   };
 
   return (
+   
     <motion.div
       className="min-h-screen bg-gradient-to-r from-blue-50 to-indigo-50 py-10"
       initial={{ opacity: 0 }}
@@ -129,14 +141,14 @@ const CampusPlaces = () => {
         variants={stagger}
         initial="hidden"
         animate="visible"
-      >
+      >  {userRole === "student" && (
         <motion.h2
           className="text-3xl font-bold text-gray-800 text-center mb-8"
           variants={fadeIn}
         >
           Campus Place Booking
         </motion.h2>
-
+      )}
         {error && (
           <motion.div
             className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md mb-6 text-center"
@@ -145,111 +157,117 @@ const CampusPlaces = () => {
             {error}
           </motion.div>
         )}
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Purpose */}
-          <motion.div variants={fadeIn}>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <FileText size={18} className="inline-block mr-2" />
-              Purpose
-            </label>
-            <input
-              type="text"
-              value={purpose}
-              onChange={(e) => setPurpose(e.target.value)}
-              placeholder="Enter purpose (e.g., Cultural Event)"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              required
-            />
-          </motion.div>
-
-          {/* Place */}
-          <motion.div variants={fadeIn}>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <MapPin size={18} className="inline-block mr-2" />
-              Place
-            </label>
-            <select
-              value={place}
-              onChange={(e) => setPlace(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              required
-            >
-              <option value="" disabled>
-                Select a place
-              </option>
-              <option value="Auditorium">Auditorium</option>
-              <option value="Seminar Hall">Seminar Hall</option>
-              <option value="Conference Room">Conference Room</option>
-              <option value="Laboratory">Laboratory</option>
-              <option value="Gym">Gym</option>
-            </select>
-          </motion.div>
-
-          {/* Date */}
-          <motion.div variants={fadeIn}>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Calendar size={18} className="inline-block mr-2" />
-              Date
-            </label>
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              required
-            />
-          </motion.div>
-
-          {/* Time From */}
-          <motion.div variants={fadeIn}>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Clock size={18} className="inline-block mr-2" />
-              Time From
-            </label>
-            <TimePicker
-              onChange={setTimeFrom}
-              value={timeFrom}
-              disableClock={true}
-              format="h:mm a"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            />
-          </motion.div>
-
-          {/* Time To */}
-          <motion.div variants={fadeIn}>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Clock size={18} className="inline-block mr-2" />
-              Time To
-            </label>
-            <TimePicker
-              onChange={setTimeTo}
-              value={timeTo}
-              disableClock={true}
-              format="h:mm a"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            />
-          </motion.div>
-
-          {/* Submit Button */}
-          <motion.div variants={fadeIn}>
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all transform hover:scale-105"
-            >
-              {loading ? (
-                <div className="flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-                </div>
-              ) : (
-                "Submit Request"
-              )}
-            </button>
-          </motion.div>
-        </form>
+      
+        {/* Show form only if user role is "student" */}
+        {userRole === "student" ? (
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Purpose */}
+            <motion.div variants={fadeIn}>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <FileText size={18} className="inline-block mr-2" />
+                Purpose
+              </label>
+              <input
+                type="text"
+                value={purpose}
+                onChange={(e) => setPurpose(e.target.value)}
+                placeholder="Enter purpose (e.g., Cultural Event)"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                required
+              />
+            </motion.div>
+  
+            {/* Place */}
+            <motion.div variants={fadeIn}>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <MapPin size={18} className="inline-block mr-2" />
+                Place
+              </label>
+              <select
+                value={place}
+                onChange={(e) => setPlace(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                required
+              >
+                <option value="" disabled>
+                  Select a place
+                </option>
+                <option value="Auditorium">Auditorium</option>
+                <option value="Seminar Hall">Seminar Hall</option>
+                <option value="Conference Room">Conference Room</option>
+              </select>
+            </motion.div>
+  
+            {/* Date */}
+            <motion.div variants={fadeIn}>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <Calendar size={18} className="inline-block mr-2" />
+                Date
+              </label>
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                required
+              />
+            </motion.div>
+  
+            {/* Time From */}
+            <motion.div variants={fadeIn}>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <Clock size={18} className="inline-block mr-2" />
+                Time From
+              </label>
+              <TimePicker
+                onChange={setTimeFrom}
+                value={timeFrom}
+                disableClock={true}
+                format="h:mm a"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              />
+            </motion.div>
+  
+            {/* Time To */}
+            <motion.div variants={fadeIn}>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <Clock size={18} className="inline-block mr-2" />
+                Time To
+              </label>
+              <TimePicker
+                onChange={setTimeTo}
+                value={timeTo}
+                disableClock={true}
+                format="h:mm a"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              />
+            </motion.div>
+  
+            {/* Submit Button */}
+            <motion.div variants={fadeIn}>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all transform hover:scale-105"
+              >
+                {loading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                  </div>
+                ) : (
+                  "Submit Request"
+                )}
+              </button>
+            </motion.div>
+          </form>
+        ) : (
+          <p className="text-center text-red-600 font-medium">
+           
+          </p>
+        )}
       </motion.div>
-
+      
+  
       <motion.div
         className="mt-8"
         initial={{ opacity: 0, y: 20 }}
@@ -260,6 +278,7 @@ const CampusPlaces = () => {
       </motion.div>
     </motion.div>
   );
+  
 };
 
 export default CampusPlaces;

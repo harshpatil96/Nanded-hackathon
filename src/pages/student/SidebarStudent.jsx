@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import {
   User,
   Vote,
+  Settings,
   Calendar,
   DollarSign,
   MessageSquare,
@@ -64,6 +65,8 @@ function SidebarStudent() {
     { to: "/dashboard/campusPlaces", icon: <Building2 size={20} />, label: "Campus Places" },
     { to: "/dashboard/CheatingRecStd", icon: <AlertTriangle size={20} />, label: "Cheating Records" },
     { to: "/dashboard/ApplicationApproval", icon: <FileCheck size={20} />, label: "Applications" },
+    
+    { to: "/dashboard/inventory", icon: <Settings size={20} />, label: "Inventory" }
   ];
 
   return (
