@@ -6,13 +6,13 @@ import { doc, getDoc } from "firebase/firestore";
 import { motion } from "framer-motion";
 import {
   Home,
-  User,
-  Vote,
-  Calendar,
-  DollarSign,
-  MessageSquare,
+  // User,
+  // Vote,
+  // Calendar,
+  // DollarSign,
+  // MessageSquare,
   Building2,
-  AlertTriangle,
+  // AlertTriangle,
   FileCheck,
   Settings,
   LogOut
@@ -71,7 +71,7 @@ function SidebarHod() {
               className="text-2xl font-bold"
               animate={{ opacity: isOpen ? 1 : 0 }}
             >
-              Dashboard
+              Head of Department
             </motion.h2>
           </div>
 

@@ -115,7 +115,7 @@ const DoctorDashboard = () => {
       >
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-4xl font-bold text-blue-900 tracking-tight">Doctor Dashboard</h1>
+            <h1 className="text-4xl font-bold text-blue-900 tracking-tight">DOCTOR </h1>
             <p className="text-gray-600 mt-2">Manage medical appointments and leave requests</p>
           </div>
           <div className="bg-white p-3 rounded-full shadow-md">

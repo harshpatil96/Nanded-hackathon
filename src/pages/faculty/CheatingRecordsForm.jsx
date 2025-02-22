@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { db } from "../../firebase/firebaseConfig.js";
-import { collection, getDocs, addDoc } from "firebase/firestore";
+import { collection, getDocs, addDoc, doc, deleteDoc, getDoc } from "firebase/firestore";
 import CheatingRecordsList from "../../components/CheatingRecordsList";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const CheatingRecordsForm = () => {
   const [records, setRecords] = useState([]);
@@ -13,6 +14,8 @@ const CheatingRecordsForm = () => {
     year: "",
     date: "",
   });
+  const [userRole, setUserRole] = useState(""); // State to store user role
+  const auth = getAuth();
 
   // Fetch records from Firestore
   useEffect(() => {
@@ -22,6 +25,20 @@ const CheatingRecordsForm = () => {
     };
     fetchRecords();
   }, []);
+
+  // Fetch user role from Firestore
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userDoc = await getDoc(doc(db, "users", user.uid)); // Fetch user document
+        if (userDoc.exists()) {
+          setUserRole(userDoc.data().role); // Set user role
+        }
+      }
+    });
+
+    return () => unsubscribe();
+  }, [auth]);
 
   // Convert Image to Base64
   const handleImageUpload = (event) => {
@@ -39,7 +56,7 @@ const CheatingRecordsForm = () => {
   const handleAddRecord = async () => {
     if (
       newRecord.name &&
-      newRecord.photo &&  // Now stored as Base64
+      newRecord.photo &&
       newRecord.description &&
       newRecord.department &&
       newRecord.year &&
@@ -56,6 +73,18 @@ const CheatingRecordsForm = () => {
       }
     } else {
       alert("Please fill all fields.");
+    }
+  };
+
+  // Function to delete a record
+  const handleDeleteRecord = async (id) => {
+    try {
+      await deleteDoc(doc(db, "cheating_records", id)); // Delete record from Firestore
+      setRecords(records.filter((record) => record.id !== id)); // Update local state
+      alert("Record deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting record: ", error);
+      alert("Failed to delete record. Please try again.");
     }
   };
 
@@ -124,7 +153,8 @@ const CheatingRecordsForm = () => {
         </button>
       </div>
 
-      <CheatingRecordsList records={records} />
+      {/* Pass userRole and handleDeleteRecord as props */}
+      <CheatingRecordsList records={records} userRole={userRole} onDeleteRecord={handleDeleteRecord} />
     </div>
   );
 };

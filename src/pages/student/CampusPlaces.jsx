@@ -181,6 +181,8 @@ const CampusPlaces = () => {
               <option value="Auditorium">Auditorium</option>
               <option value="Seminar Hall">Seminar Hall</option>
               <option value="Conference Room">Conference Room</option>
+              <option value="Laboratory">Laboratory</option>
+              <option value="Gym">Gym</option>
             </select>
           </motion.div>
 

@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { motion, AnimatePresence } from "framer-motion";
-import { AlertCircle, X, Image as ImageIcon } from "lucide-react";
+import { AlertCircle, X, Image as ImageIcon, Trash2 } from "lucide-react";
 
-const CheatingRecordsList = ({ records }) => {
+const CheatingRecordsList = ({ records, userRole, onDeleteRecord }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageURLs, setImageURLs] = useState({});
 
@@ -11,7 +11,6 @@ const CheatingRecordsList = ({ records }) => {
     const urls = {};
 
     records.forEach((record) => {
-      // If record.photo is already a string URL (not a Blob), use it directly
       if (typeof record.photo === "string" && record.photo.startsWith("blob:")) {
         urls[record.id] = record.photo;
       } else {
@@ -77,6 +76,7 @@ const CheatingRecordsList = ({ records }) => {
                 <th className="p-3">Department</th>
                 <th className="p-3">Year</th>
                 <th className="p-3">Date</th>
+                {userRole === "faculty" && <th className="p-3">Actions</th>} {/* Show Actions column only for faculty */}
               </tr>
             </thead>
             <tbody>
@@ -107,11 +107,21 @@ const CheatingRecordsList = ({ records }) => {
                     <td className="p-3">{record.department}</td>
                     <td className="p-3">{record.year}</td>
                     <td className="p-3">{record.date}</td>
+                    {userRole === "faculty" && ( // Show delete button only for faculty
+                      <td className="p-3">
+                        <button
+                          className="text-red-500 hover:text-red-700 transition"
+                          onClick={() => onDeleteRecord(record.id)}
+                        >
+                          <Trash2 size={20} />
+                        </button>
+                      </td>
+                    )}
                   </motion.tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="6" className="p-3 text-center text-gray-500">
+                  <td colSpan={userRole === "faculty" ? 7 : 6} className="p-3 text-center text-gray-500">
                     No records found.
                   </td>
                 </tr>
@@ -168,6 +178,8 @@ CheatingRecordsList.propTypes = {
       date: PropTypes.string.isRequired,
     })
   ).isRequired,
+  userRole: PropTypes.string.isRequired, // Validate userRole prop
+  onDeleteRecord: PropTypes.func.isRequired, // Validate onDeleteRecord prop
 };
 
 export default CheatingRecordsList;

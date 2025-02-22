@@ -6,9 +6,9 @@ import { doc, getDoc } from "firebase/firestore";
 import { motion } from "framer-motion";
 import {
   Home,
-  User,
+  // User,
   Vote,
-  Calendar,
+  // Calendar,
   DollarSign,
   MessageSquare,
   Building2,
@@ -75,7 +75,7 @@ function SidebarAdmin() {
               className="text-2xl font-bold"
               animate={{ opacity: isOpen ? 1 : 0 }}
             >
-              Admin Dashboard
+              ADMIN 
             </motion.h2>
             {/* <button
               onClick={() => setIsOpen(!isOpen)}
