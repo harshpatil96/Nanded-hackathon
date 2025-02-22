@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
 import { db, auth } from "../../firebase/firebaseConfig";
-import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
+import { useNavigate } from "react-router-dom";
 
 const CandidateApplication = () => {
   const [elections, setElections] = useState([]);
@@ -16,7 +16,7 @@ const CandidateApplication = () => {
     cgpa: "",
     whyApply: "",
     goals: "",
-    role: "", // Add role field to formData
+    role: "",
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -24,9 +24,8 @@ const CandidateApplication = () => {
   const [totalApplications, setTotalApplications] = useState([]);
   const [userApplications, setUserApplications] = useState([]);
 
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
-  // Fetch elections on component mount
   useEffect(() => {
     const fetchElections = async () => {
       try {
@@ -42,14 +41,12 @@ const CandidateApplication = () => {
     fetchElections();
   }, []);
 
-  // Fetch user applications on component mount and when view changes to "your"
   useEffect(() => {
     if (view === "your") {
       fetchUserApplications();
     }
   }, [view]);
 
-  // Fetch the logged-in user's email and set it in the formData
   useEffect(() => {
     const user = auth.currentUser;
     if (user) {
@@ -101,7 +98,7 @@ const CandidateApplication = () => {
     setSelectedElection(election);
     setFormData((prevFormData) => ({
       ...prevFormData,
-      role: election.role, // Set the role based on the selected election
+      role: election.role,
     }));
     setView("apply");
   };
@@ -133,7 +130,7 @@ const CandidateApplication = () => {
         email: user.email,
         electionId: selectedElection.id,
         electionName: selectedElection.name,
-        role: selectedElection.role, // Include the role in the document
+        role: selectedElection.role,
         status: "Pending",
         appliedAt: new Date().toISOString(),
       });
@@ -141,14 +138,14 @@ const CandidateApplication = () => {
       setFormData({
         name: "",
         rollNumber: "",
-        email: user.email, // Keep the email field populated
+        email: user.email,
         mobile: "",
         courseYear: "",
         branch: "",
         cgpa: "",
         whyApply: "",
         goals: "",
-        role: "", // Reset the role field
+        role: "",
       });
       await fetchUserApplications();
       setTimeout(() => {
@@ -168,8 +165,8 @@ const CandidateApplication = () => {
     };
 
     return (
-      <div key={application.id} className="bg-white rounded-lg shadow-md p-6 mb-4">
-        <div className="flex justify-between items-start mb-4">
+      <div key={application.id} className="bg-white rounded-lg shadow-lg p-6 mb-4 transition-transform transform hover:scale-105 ease-in-out duration-300 hover:shadow-xl">
+        <div className="flex justify-between items-center mb-4">
           <h3 className="text-xl font-bold text-blue-800">{application.electionName}</h3>
           <span className={`px-3 py-1 rounded-full text-sm font-medium ${statusColors[application.status]}`}>
             {application.status}
@@ -227,54 +224,52 @@ const CandidateApplication = () => {
     );
   };
 
-  // Function to handle navigation to the voting page
   const handleGiveVoteClick = () => {
-    navigate("/voting"); // Navigate to the voting page
+    navigate("/voting");
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center p-6">
-      {/* "Give Vote !" Button */}
+    <div className="min-h-screen bg-gradient-to-r from-gray-100 to-white flex flex-col items-center p-6">
       <button
-  onClick={handleGiveVoteClick}
-  className="fixed right-6 top-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl flex items-center space-x-2"
->
-  <span>Give Vote !</span>
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className="h-5 w-5"
-    viewBox="0 0 20 20"
-    fill="currentColor"
-  >
-    <path
-      fillRule="evenodd"
-      d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
-      clipRule="evenodd"
-    />
-  </svg>
-</button>
+        onClick={handleGiveVoteClick}
+        className="fixed right-6 top-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl flex items-center space-x-2"
+      >
+        <span>Give Vote !</span>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fillRule="evenodd"
+            d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
+            clipRule="evenodd"
+          />
+        </svg>
+      </button>
 
-      <div className="flex gap-4 mb-6">
+      <div className="flex gap-4 mb-6 mt-4">
         <button
           onClick={() => handleViewChange("upcoming")}
-          className={`px-6 py-2 rounded-lg ${
-            view === "upcoming" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700"
+          className={`px-6 py-3 rounded-lg font-semibold transition-transform transform hover:scale-110 ease-in-out duration-300 ${
+            view === "upcoming" ? "bg-blue-600 text-white shadow-lg" : "bg-gray-200 text-gray-700 shadow"
           }`}
         >
           Upcoming Elections
         </button>
         <button
           onClick={() => handleViewChange("total")}
-          className={`px-6 py-2 rounded-lg ${
-            view === "total" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700"
+          className={`px-6 py-3 rounded-lg font-semibold transition-transform transform hover:scale-110 ease-in-out duration-300 ${
+            view === "total" ? "bg-blue-600 text-white shadow-lg" : "bg-gray-200 text-gray-700 shadow"
           }`}
         >
           Total Applications
         </button>
         <button
           onClick={() => handleViewChange("your")}
-          className={`px-6 py-2 rounded-lg ${
-            view === "your" ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700"
+          className={`px-6 py-3 rounded-lg font-semibold transition-transform transform hover:scale-110 ease-in-out duration-300 ${
+            view === "your" ? "bg-blue-600 text-white shadow-lg" : "bg-gray-200 text-gray-700 shadow"
           }`}
         >
           Your Applications
@@ -289,14 +284,14 @@ const CandidateApplication = () => {
           <h1 className="text-3xl font-bold text-blue-800 mb-6">Upcoming Elections</h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {elections.map((election) => (
-              <div key={election.id} className="bg-white p-6 rounded-lg shadow-md">
+              <div key={election.id} className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 transform hover:scale-105">
                 <h3 className="text-xl font-bold text-blue-800 mb-2">{election.name}</h3>
                 <p className="text-gray-700 mb-1"><strong>Role:</strong> {election.role}</p>
                 <p className="text-gray-700 mb-1"><strong>Application Dates:</strong> {election.applicationDates.start} to {election.applicationDates.end}</p>
                 <p className="text-gray-700 mb-1"><strong>Voting Date:</strong> {election.votingDate}</p>
                 <button
                   onClick={() => handleApplyClick(election)}
-                  className="mt-4 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg"
+                  className="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-300 shadow-md hover:shadow-lg"
                 >
                   Apply
                 </button>
@@ -329,16 +324,12 @@ const CandidateApplication = () => {
               </thead>
               <tbody>
                 {totalApplications.map((application) => (
-                  <tr key={application.id} className="hover:bg-gray-50">
+                  <tr key={application.id} className="hover:bg-gray-50 transition-colors duration-200">
                     <td className="px-6 py-4 border-b border-gray-200">{application.name}</td>
                     <td className="px-6 py-4 border-b border-gray-200">{application.electionName}</td>
                     <td className="px-6 py-4 border-b border-gray-200">{application.role}</td>
                     <td className="px-6 py-4 border-b border-gray-200">
-                      <span className={`px-2 py-1 rounded-full text-sm ${
-                        application.status === "Pending" ? "bg-yellow-100 text-yellow-800" :
-                        application.status === "Approved" ? "bg-green-100 text-green-800" :
-                        "bg-red-100 text-red-800"
-                      }`}>
+                      <span className={`px-2 py-1 rounded-full text-sm ${statusColors[application.status]}`}>
                         {application.status}
                       </span>
                     </td>
@@ -356,10 +347,10 @@ const CandidateApplication = () => {
           <div className="w-full max-w-4xl">
             {userApplications.length === 0 ? (
               <div className="bg-white p-6 rounded-lg shadow-md text-center">
-                <p className="text-gray-600">You haven&apos;t submitted any applications yet.</p>
+                <p className="text-gray-600">You haven't submitted any applications yet.</p>
                 <button
                   onClick={() => handleViewChange("upcoming")}
-                  className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+                  className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-300 shadow-md hover:shadow-lg"
                 >
                   View Upcoming Elections
                 </button>
@@ -385,7 +376,7 @@ const CandidateApplication = () => {
                     name={key}
                     value={formData[key]}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border rounded-lg"
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     rows={4}
                     required
                   />
@@ -395,21 +386,21 @@ const CandidateApplication = () => {
                     name={key}
                     value={formData[key]}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border rounded-lg"
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
-                    disabled={key === "email" || key === "role"} // Disable email and role fields
+                    disabled={key === "email" || key === "role"}
                   />
                 )}
               </div>
             ))}
             <div className="flex gap-4">
-              <button type="submit" className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+              <button type="submit" className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors duration-300 shadow-md hover:shadow-lg">
                 Submit Application
               </button>
               <button
                 type="button"
                 onClick={() => handleViewChange("upcoming")}
-                className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300"
+                className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors duration-300 shadow-md hover:shadow-lg"
               >
                 Cancel
               </button>
