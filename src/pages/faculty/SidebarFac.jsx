@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import {
   Home,
   AlertTriangle,
-  LogOut
+  LogOut,Calendar
 } from "lucide-react";
 
 function SidebarFac() {
@@ -44,7 +44,8 @@ function SidebarFac() {
 
   const navItems = [
     { to: "/dashboard/home", icon: <Home size={20} />, label: "Home" },
-    { to: "/dashboard/Cheating", icon: <AlertTriangle size={20} />, label: "Cheating Records" }
+    { to: "/dashboard/Cheating", icon: <AlertTriangle size={20} />, label: "Cheating Records" },
+    { to: "/dashboard/LeaveApplication",icon: <Calendar size={20} />, label: "Leave Application" }
   ];
 
   return (
