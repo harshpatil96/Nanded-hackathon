@@ -3,11 +3,18 @@ import { signOut } from "firebase/auth";
 import { auth, db } from "../../firebase/firebaseConfig";
 import { useNavigate, Outlet, NavLink } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
+import { motion } from "framer-motion";
+import {
+  Home,
+  CalendarCheck,
+  LogOut
+} from "lucide-react";
 
 function SidebarDoc() {
   const navigate = useNavigate();
   const [role, setRole] = useState("");
   const [name, setName] = useState("");
+  const [isOpen, setIsOpen] = useState(true);
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -30,54 +37,82 @@ function SidebarDoc() {
     navigate("/");
   };
 
+  const sidebarVariants = {
+    open: { width: "256px" },
+    closed: { width: "80px" }
+  };
+
+  const navItems = [
+    { to: "/dashboard/home", icon: <Home size={20} />, label: "Home" },
+    { to: "/dashboard/DoctorDashboard", icon: <CalendarCheck size={20} />, label: "Student Appointments" }
+  ];
+
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <div className="w-64 bg-blue-900 text-white p-6 flex flex-col">
-        <h2 className="text-2xl font-bold mb-4"> Doctor Dashboard</h2>
-        
-        {/* User Info */}
-        <p className="text-sm text-gray-200 border-l-4 border-blue-400 pl-3 py-2 rounded-md mb-4">
-          <span className="font-semibold text-blue-300 tracking-wide">Hello, {name}</span> ({role})
-        </p>
-
-        {/* Sidebar Links */}
-        <ul className="space-y-4">
-          <li>
-            <NavLink
-              to="/dashboard/home"
-              className={({ isActive }) =>
-                `block p-3 rounded-lg cursor-pointer transition ${
-                  isActive ? "bg-blue-700" : "hover:bg-blue-700"
-                }`
-              }
+      <motion.div
+        className="h-full bg-gradient-to-b from-blue-900 to-blue-800 text-white flex flex-col"
+        variants={sidebarVariants}
+        animate={isOpen ? "open" : "closed"}
+        transition={{ duration: 0.3 }}
+      >
+        <div className="p-6 flex-1 overflow-y-auto scrollbar-hide">
+          <div className="flex items-center justify-between mb-6">
+            <motion.h2
+              className="text-2xl font-bold"
+              animate={{ opacity: isOpen ? 1 : 0 }}
             >
-              Home
-            </NavLink>
-          </li>
-          {/* Student Info - Only visible to "student" role */}
-        
-        
+              Doctor Dashboard
+            </motion.h2>
+          </div>
 
-        {/* Settings - Only visible to "admin" role */}
-        
-          <li
-            onClick={() => navigate("/dashboard/DoctorDashboard")}
-            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
+          <motion.div
+            className="mb-6 p-4 bg-blue-800 rounded-lg"
+            animate={{ opacity: isOpen ? 1 : 0 }}
           >
-            Students Appointments
-          </li>
-        
-          <li
+            <p className="text-sm">
+              <span className="block font-semibold text-blue-300">{name}</span>
+              <span className="text-gray-300">{role}</span>
+            </p>
+          </motion.div>
+
+          <div className="space-y-2">
+            {navItems.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={({ isActive }) =>
+                  `flex items-center p-3 rounded-lg transition-all transform hover:scale-105 ${isActive
+                    ? "bg-blue-700 text-white"
+                    : "hover:bg-blue-800"
+                  }`
+                }
+              >
+                <span className="mr-3">{item.icon}</span>
+                <motion.span
+                  animate={{ opacity: isOpen ? 1 : 0 }}
+                  className="whitespace-nowrap"
+                >
+                  {item.label}
+                </motion.span>
+              </NavLink>
+            ))}
+          </div>
+        </div>
+
+        {/* LOGOUT BUTTON CONTAINER FIXED HERE */}
+        <div className="p-4">
+          <button
             onClick={handleLogout}
-            className="p-3 rounded-lg cursor-pointer bg-red-600 hover:bg-red-800 transition text-center"
+            className="flex items-center px-4 py-2 w-full bg-red-600 hover:bg-red-700 rounded-lg transition-all transform hover:scale-105"
           >
-            Logout
-          </li>
-        </ul>
-      </div>
+            <LogOut size={20} className="mr-2" />
+            <motion.span animate={{ opacity: isOpen ? 1 : 0 }}>
+              Logout
+            </motion.span>
+          </button>
+        </div>
+      </motion.div>
 
-      {/* Main Content (This will change dynamically) */}
       <div className="flex-1 p-6 overflow-y-auto">
         <Outlet />
       </div>

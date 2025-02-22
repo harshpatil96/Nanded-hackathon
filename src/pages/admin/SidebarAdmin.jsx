@@ -3,11 +3,26 @@ import { signOut } from "firebase/auth";
 import { auth, db } from "../../firebase/firebaseConfig";
 import { useNavigate, Outlet, NavLink } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
+import { motion } from "framer-motion";
+import {
+  Home,
+  User,
+  Vote,
+  Calendar,
+  DollarSign,
+  MessageSquare,
+  Building2,
+  AlertTriangle,
+  FileCheck,
+  Settings,
+  LogOut
+} from "lucide-react";
 
 function SidebarAdmin() {
   const navigate = useNavigate();
   const [role, setRole] = useState("");
   const [name, setName] = useState("");
+  const [isOpen, setIsOpen] = useState(true);
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -30,79 +45,93 @@ function SidebarAdmin() {
     navigate("/");
   };
 
+  const sidebarVariants = {
+    open: { width: "256px" },
+    closed: { width: "80px" }
+  };
+
+  const navItems = [
+    { to: "/dashboard/home", icon: <Home size={20} />, label: "Home" },
+    { to: "/dashboard/ContestElections", icon: <Vote size={20} />, label: "Elections" },
+    { to: "/dashboard/budget-track", icon: <DollarSign size={20} />, label: "Budget Tracking" },
+    { to: "/dashboard/complaints", icon: <MessageSquare size={20} />, label: "Complaints" },
+    { to: "/dashboard/campusPlaces", icon: <Building2 size={20} />, label: "Campus Places" },
+    { to: "/dashboard/CheatingRecStd", icon: <AlertTriangle size={20} />, label: "Cheating Records" },
+    { to: "/dashboard/ApplicationApproval", icon: <FileCheck size={20} />, label: "Applications" },
+    { to: "/dashboard/settings", icon: <Settings size={20} />, label: "Settings" }
+  ];
+
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <div className="w-64 bg-blue-900 text-white p-6 flex flex-col">
-        <h2 className="text-2xl font-bold mb-4"> Admin Dashboard</h2>
-        
-        {/* User Info */}
-        <p className="text-sm text-gray-200 border-l-4 border-blue-400 pl-3 py-2 rounded-md mb-4">
-          <span className="font-semibold text-blue-300 tracking-wide">Hello, {name}</span> ({role})
-        </p>
-
-        {/* Sidebar Links */}
-        <ul className="space-y-4">
-          <li>
-            <NavLink
-              to="/dashboard/home"
-              className={({ isActive }) =>
-                `block p-3 rounded-lg cursor-pointer transition ${
-                  isActive ? "bg-blue-700" : "hover:bg-blue-700"
-                }`
-              }
+      <motion.div
+        className="h-full bg-gradient-to-b from-blue-900 to-blue-800 text-white flex flex-col"
+        variants={sidebarVariants}
+        animate={isOpen ? "open" : "closed"}
+        transition={{ duration: 0.3 }}
+      >
+        <div className="p-6 flex-1 overflow-y-auto scrollbar-hide">
+          <div className="flex items-center justify-between mb-6">
+            <motion.h2
+              className="text-2xl font-bold"
+              animate={{ opacity: isOpen ? 1 : 0 }}
             >
-              Home
-            </NavLink>
-          </li>
-        
-          <li
-            onClick={() => navigate("/dashboard/ContestElections")}
-            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
-          >
-            Elections
-          </li>
-          <li
-            onClick={() => navigate("/dashboard/budget-track")}
-            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
-          >
-            Budget Tracking
-          </li>
-          <li
-            onClick={() => navigate("/dashboard/complaints")}
-            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
-          >
-            Complaints
-          </li>
-          <li
-            onClick={() => navigate("/dashboard/settings")}
-            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
-          >
-            Settings
-          </li>
-          <li
-            onClick={() => navigate("/dashboard/campusPlaces")}
-            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
-          >
-            Campus Places Booking
-          </li>
-          <li
-            onClick={() => navigate("/dashboard/CheatingRecStd")}
-            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
-          >
-            Cheating Records
-          </li>
-        
-          <li
-            onClick={handleLogout}
-            className="p-3 rounded-lg cursor-pointer bg-red-600 hover:bg-red-800 transition text-center"
-          >
-            Logout
-          </li>
-        </ul>
-      </div>
+              Admin Dashboard
+            </motion.h2>
+            {/* <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="p-2 rounded-full hover:bg-blue-800 transition-colors"
+            >
+              {isOpen ? "←" : "→"}
+            </button> */}
+          </div>
 
-      {/* Main Content (This will change dynamically) */}
+          <motion.div
+            className="mb-6 p-4 bg-blue-800 rounded-lg"
+            animate={{ opacity: isOpen ? 1 : 0 }}
+          >
+            <p className="text-sm">
+              <span className="block font-semibold text-blue-300">{name}</span>
+              <span className="text-gray-300">{role}</span>
+            </p>
+          </motion.div>
+
+          <div className="space-y-2">
+            {navItems.map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={({ isActive }) =>
+                  `flex items-center p-3 rounded-lg transition-all transform hover:scale-105 ${isActive
+                    ? "bg-blue-700 text-white"
+                    : "hover:bg-blue-800"
+                  }`
+                }
+              >
+                <span className="mr-3">{item.icon}</span>
+                <motion.span
+                  animate={{ opacity: isOpen ? 1 : 0 }}
+                  className="whitespace-nowrap"
+                >
+                  {item.label}
+                </motion.span>
+              </NavLink>
+            ))}
+          </div>
+        </div>
+
+        <div className="p-4">
+          <button
+            onClick={handleLogout}
+            className="flex items-center px-4 py-2 w-full bg-red-600 hover:bg-red-700 rounded-lg transition-all transform hover:scale-105"
+          >
+            <LogOut size={20} className="mr-2" />
+            <motion.span animate={{ opacity: isOpen ? 1 : 0 }}>
+              Logout
+            </motion.span>
+          </button>
+        </div>
+      </motion.div>
+
       <div className="flex-1 p-6 overflow-y-auto">
         <Outlet />
       </div>
