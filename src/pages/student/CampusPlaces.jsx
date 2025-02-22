@@ -1,31 +1,32 @@
 import { useState, useEffect } from "react";
-import { auth, db } from "../../firebase/firebaseConfig"; // Correct relative path
+import { auth, db } from "../../firebase/firebaseConfig";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
-import TimePicker from "react-time-picker"; // Import react-time-picker
-import "react-time-picker/dist/TimePicker.css"; // Import CSS for react-time-picker
+import TimePicker from "react-time-picker";
+import "react-time-picker/dist/TimePicker.css";
 import PlacesAlotted from "../../components/PlacesAlotted";
+import { motion } from "framer-motion";
+import { Calendar, Clock, MapPin, FileText } from "lucide-react";
 
 const CampusPlaces = () => {
-  const [user, setUser] = useState(null); // Logged-in user
-  const [purpose, setPurpose] = useState(""); // Purpose of booking
-  const [place, setPlace] = useState(""); // Place to be booked
-  const [date, setDate] = useState(""); // Date of booking
-  const [timeFrom, setTimeFrom] = useState("10:00 AM"); // Time From (12-hour format)
-  const [timeTo, setTimeTo] = useState("12:00 PM"); // Time To (12-hour format)
-  const [loading, setLoading] = useState(false); // Loading state
-  const [error, setError] = useState(""); // Error message
+  const [user, setUser] = useState(null);
+  const [purpose, setPurpose] = useState("");
+  const [place, setPlace] = useState("");
+  const [date, setDate] = useState("");
+  const [timeFrom, setTimeFrom] = useState("10:00 AM");
+  const [timeTo, setTimeTo] = useState("12:00 PM");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   // Fetch the logged-in user's information
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
-        // Fetch user details from Firestore
         const userRef = doc(db, "users", currentUser.uid);
         const userSnap = await getDoc(userRef);
 
         if (userSnap.exists()) {
-          setUser(userSnap.data()); // Set user data
+          setUser(userSnap.data());
         } else {
           setError("User not found in Firestore.");
         }
@@ -34,7 +35,7 @@ const CampusPlaces = () => {
       }
     });
 
-    return () => unsubscribe(); // Cleanup on unmount
+    return () => unsubscribe();
   }, []);
 
   // Convert 12-hour time to 24-hour format
@@ -64,28 +65,25 @@ const CampusPlaces = () => {
         throw new Error("User not logged in.");
       }
 
-      // Convert 12-hour time to 24-hour format
       const timeFrom24h = convertTo24HourFormat(timeFrom);
       const timeTo24h = convertTo24HourFormat(timeTo);
 
-      // Create a new request object
       const requestData = {
-        requestId: `${user.uid}_${Date.now()}`, // Unique request ID
-        studentUid: user.uid, // User's UID
-        studentName: user.displayName, // User's name
-        studentEmail: user.email, // User's email
-        department: user.department, // User's department
-        purpose: purpose, // Purpose of booking
-        place: place, // Place to be booked
-        date: date, // Date of booking
-        timeFrom: timeFrom24h, // Time From (24-hour format)
-        timeTo: timeTo24h, // Time To (24-hour format)
-        status: "pending", // Default status
-        createdAt: new Date().toISOString(), // Timestamp
-        updatedAt: new Date().toISOString(), // Timestamp
+        requestId: `${user.uid}_${Date.now()}`,
+        studentUid: user.uid,
+        studentName: user.displayName,
+        studentEmail: user.email,
+        department: user.department,
+        purpose: purpose,
+        place: place,
+        date: date,
+        timeFrom: timeFrom24h,
+        timeTo: timeTo24h,
+        status: "pending",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       };
 
-      // Add or update the request in the "requests" collection
       const requestRef = doc(db, "requests", requestData.requestId);
       await setDoc(requestRef, requestData, { merge: true });
 
@@ -103,23 +101,56 @@ const CampusPlaces = () => {
     }
   };
 
+  // Animation variants
+  const fadeIn = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
+
+  const stagger = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+      },
+    },
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-50 to-indigo-50 py-10">
-      <div className="max-w-4xl mx-auto p-6 bg-white shadow-2xl rounded-xl border border-gray-100">
-        <h2 className="text-3xl font-bold text-gray-800 text-center mb-8">
+    <motion.div
+      className="min-h-screen bg-gradient-to-r from-blue-50 to-indigo-50 py-10"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.div
+        className="max-w-4xl mx-auto p-6 bg-white shadow-2xl rounded-xl border border-gray-100"
+        variants={stagger}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.h2
+          className="text-3xl font-bold text-gray-800 text-center mb-8"
+          variants={fadeIn}
+        >
           Campus Place Booking
-        </h2>
+        </motion.h2>
 
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md mb-6 text-center">
+          <motion.div
+            className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md mb-6 text-center"
+            variants={fadeIn}
+          >
             {error}
-          </div>
+          </motion.div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Purpose */}
-          <div>
+          <motion.div variants={fadeIn}>
             <label className="block text-sm font-medium text-gray-700 mb-2">
+              <FileText size={18} className="inline-block mr-2" />
               Purpose
             </label>
             <input
@@ -130,11 +161,12 @@ const CampusPlaces = () => {
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               required
             />
-          </div>
+          </motion.div>
 
           {/* Place */}
-          <div>
+          <motion.div variants={fadeIn}>
             <label className="block text-sm font-medium text-gray-700 mb-2">
+              <MapPin size={18} className="inline-block mr-2" />
               Place
             </label>
             <select
@@ -150,11 +182,12 @@ const CampusPlaces = () => {
               <option value="Seminar Hall">Seminar Hall</option>
               <option value="Conference Room">Conference Room</option>
             </select>
-          </div>
+          </motion.div>
 
           {/* Date */}
-          <div>
+          <motion.div variants={fadeIn}>
             <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Calendar size={18} className="inline-block mr-2" />
               Date
             </label>
             <input
@@ -164,11 +197,12 @@ const CampusPlaces = () => {
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               required
             />
-          </div>
+          </motion.div>
 
           {/* Time From */}
-          <div>
+          <motion.div variants={fadeIn}>
             <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Clock size={18} className="inline-block mr-2" />
               Time From
             </label>
             <TimePicker
@@ -178,11 +212,12 @@ const CampusPlaces = () => {
               format="h:mm a"
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             />
-          </div>
+          </motion.div>
 
           {/* Time To */}
-          <div>
+          <motion.div variants={fadeIn}>
             <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Clock size={18} className="inline-block mr-2" />
               Time To
             </label>
             <TimePicker
@@ -192,10 +227,10 @@ const CampusPlaces = () => {
               format="h:mm a"
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             />
-          </div>
+          </motion.div>
 
           {/* Submit Button */}
-          <div>
+          <motion.div variants={fadeIn}>
             <button
               type="submit"
               disabled={loading}
@@ -209,11 +244,19 @@ const CampusPlaces = () => {
                 "Submit Request"
               )}
             </button>
-          </div>
+          </motion.div>
         </form>
-      </div>
-      <PlacesAlotted />
-    </div>
+      </motion.div>
+
+      <motion.div
+        className="mt-8"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5 }}
+      >
+        <PlacesAlotted />
+      </motion.div>
+    </motion.div>
   );
 };
 

@@ -25,6 +25,8 @@ const ComplaintForm = () => {
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
   const [userRole, setUserRole] = useState("");
+  const [resolvingComplaintId, setResolvingComplaintId] = useState(null);
+  const [resolutionText, setResolutionText] = useState("");
   const auth = getAuth();
   const filter = new Filter();
 
@@ -103,9 +105,16 @@ const ComplaintForm = () => {
     }
   };
 
-  const handleResolve = async (id) => {
+  const handleResolve = async (id, resolutionText) => {
     try {
-      await updateDoc(doc(db, "complaints", id), { status: "Resolved" });
+      await updateDoc(doc(db, "complaints", id), {
+        status: "Resolved",
+        resolution: resolutionText,
+        resolvedBy: auth.currentUser.displayName || "Admin",
+        resolvedAt: serverTimestamp(),
+      });
+      setResolvingComplaintId(null);
+      setResolutionText("");
     } catch (error) {
       console.error("Error updating complaint:", error);
     }
@@ -127,6 +136,52 @@ const ComplaintForm = () => {
   const complaintVariants = {
     hidden: { opacity: 0, x: -20 },
     visible: { opacity: 1, x: 0 }
+  };
+
+  const ResolutionInput = ({ complaintId, onResolve, onCancel, resolutionText, setResolutionText }) => {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        className="mt-4 p-4 bg-gray-50 rounded-lg"
+      >
+        <textarea
+          value={resolutionText}
+          onChange={(e) => setResolutionText(e.target.value)}
+          placeholder="Describe the actions taken to resolve the complaint..."
+          className="w-full p-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 resize-none"
+          rows={4}
+          required
+        />
+        <div className="mt-4 flex gap-2">
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => {
+              onResolve(complaintId, resolutionText);
+              setResolutionText("");
+            }}
+            className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-300 flex items-center gap-2"
+          >
+            <CheckCircle className="w-4 h-4" />
+            <span>Submit Resolution</span>
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => {
+              onCancel();
+              setResolutionText("");
+            }}
+            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors duration-300 flex items-center gap-2"
+          >
+            <X className="w-4 h-4" />
+            <span>Cancel</span>
+          </motion.button>
+        </div>
+      </motion.div>
+    );
   };
 
   return (
@@ -299,20 +354,39 @@ const ComplaintForm = () => {
                       </span>
                     </div>
 
+                    {complaint.status === "Resolved" && (
+                      <div className="mt-4 bg-green-50 p-4 rounded-lg">
+                        <p className="text-green-800 font-semibold">Resolved by: {complaint.resolvedBy}</p>
+                        <p className="text-green-800">{complaint.resolution}</p>
+                        <p className="text-green-800 text-sm">
+                          Resolved at: {complaint.resolvedAt?.toDate().toLocaleString()}
+                        </p>
+                      </div>
+                    )}
+
                     {(userRole === "admin" || userRole === "faculty" || userRole === "hod") && (
                       <div className="mt-4 flex gap-2">
                         {complaint.status === "Pending" && (
                           <motion.button
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            onClick={() => handleResolve(complaint.id)}
+                            onClick={() => setResolvingComplaintId(complaint.id)}
                             className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-300 flex items-center gap-2"
                           >
                             <CheckCircle className="w-4 h-4" />
                             <span>Resolve</span>
                           </motion.button>
                         )}
-                        {userRole === "admin" && complaint.status === "Resolved" && (
+                        {resolvingComplaintId === complaint.id && (
+                          <ResolutionInput
+                            complaintId={complaint.id}
+                            onResolve={handleResolve}
+                            onCancel={() => setResolvingComplaintId(null)}
+                            resolutionText={resolutionText}
+                            setResolutionText={setResolutionText}
+                          />
+                        )}
+                        {userRole === "admin" && complaints.status === "Resolved" && (
                           <motion.button
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
