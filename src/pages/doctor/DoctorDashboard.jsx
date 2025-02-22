@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { db } from "../../firebase/firebaseConfig";
 import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 import { motion, AnimatePresence } from "framer-motion";
@@ -57,6 +57,7 @@ const DoctorDashboard = () => {
     }
 
     try {
+      // Update the appointment status in Firestore
       await updateDoc(doc(db, "DoctorAppointment", selectedAppointment.id), {
         status: "approved",
         description: leaveDetails.description,
@@ -64,16 +65,17 @@ const DoctorDashboard = () => {
         leaveTo: leaveDetails.leaveTo,
       });
 
-      // Show success message with animation
+      // Show success message
       const successMessage = document.createElement('div');
       successMessage.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center gap-2';
       successMessage.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Leave approved successfully!';
       document.body.appendChild(successMessage);
-      
+
       setTimeout(() => {
         successMessage.remove();
       }, 3000);
 
+      // Reset state
       setSelectedAppointment(null);
       setLeaveDetails({ description: "", leaveFrom: "", leaveTo: "" });
       fetchAppointments();
