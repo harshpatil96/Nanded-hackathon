@@ -19,6 +19,7 @@ import SidebarFac from "./pages/faculty/SidebarFac";
 import CheatingRecStd from "./pages/student/CheatingRecStd";
 import ContestElections from "./pages/admin/ContestElections";
 import CandidateApplication from "./pages/student/CandidateApplication";
+import ApplicationDashboard from "./pages/ApplicationDashboard.jsx";
 
 // Placeholder components for other pages
 function HomePage() {
@@ -75,6 +76,7 @@ function App() {
               <Route path="/election/:electionId" element={<ElectionDetails />} />
               <Route path="/dashboard/budget-track" element={<BudgetDashboard />} />
               <Route path="/dashboard/complaints" element={<ComplaintForm />} />
+              <Route path="/dashboard/ApplicationApproval" element={<ApplicationDashboard />} />
               
              
               <Route path="/dashboard/campusPlaces" element={<CampusPlaces />} />

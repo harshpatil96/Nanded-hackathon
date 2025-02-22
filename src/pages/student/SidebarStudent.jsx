@@ -140,6 +140,18 @@ function SidebarStudent() {
                 Cheating Records
               </NavLink>
             </li>
+            <li>
+              <NavLink
+                to="/dashboard/ApplicationApproval"
+                className={({ isActive }) =>
+                  `block p-3 rounded-lg cursor-pointer transition ${
+                    isActive ? "bg-blue-700" : "hover:bg-blue-700"
+                  }`
+                }
+              >
+                Application Approval
+              </NavLink>
+            </li>
           </ul>
         </div>
 

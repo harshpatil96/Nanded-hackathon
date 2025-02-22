@@ -12,7 +12,6 @@ const Dashboard = () => {
   const [totalAllocated, setTotalAllocated] = useState(0);
   const [totalSpent, setTotalSpent] = useState(0);
   const [role, setRole] = useState(""); // Store user role
-
   const [selectedBudget, setSelectedBudget] = useState(null);
   const [showForm, setShowForm] = useState(false);
 

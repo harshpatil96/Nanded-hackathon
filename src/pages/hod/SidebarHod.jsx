@@ -67,6 +67,12 @@ function SidebarHod() {
           >
             Campus Places Booking Requests
           </li>
+          <li
+            onClick={() => navigate("/dashboard/ApplicationApproval")}
+            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
+          >
+            Application approval
+          </li>
         
           <li
             onClick={handleLogout}
