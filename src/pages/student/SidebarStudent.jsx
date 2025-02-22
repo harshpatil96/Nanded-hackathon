@@ -44,42 +44,14 @@ function SidebarStudent() {
         {/* Sidebar Links with Scroll */}
         <div className="flex-1 overflow-y-auto">
           <ul className="space-y-2">
-            <li>
-              <NavLink
-                to="/dashboard/home"
-                className={({ isActive }) =>
-                  `block p-3 rounded-lg cursor-pointer transition ${
-                    isActive ? "bg-blue-700" : "hover:bg-blue-700"
-                  }`
-                }
-              >
-                Home
-              </NavLink>
-            </li>
-         
-          
-            <li
-            onClick={() => navigate("/dashboard/CandidateApplication")}
-            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
-          >
-            Apply for Elections
-          </li>
-
-
-          <li
-            onClick={() => navigate("/dashboard/StudentAppointment")}
-            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
-          >
-              Schedule Doctor Appointment
-          </li>
-        
-        
-            <li
-              onClick={() => navigate("/dashboard/budget-track")}
-              className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
-            >
-              Budget Tracking
-            </li>
+            
+            
+            
+            
+            
+            
+            
+            
             <li>
               <NavLink
                 to="/dashboard/student-info"
@@ -91,20 +63,45 @@ function SidebarStudent() {
               >
                 Student Info
               </NavLink>
+            
             </li>
+         
+          
             <li>
-              <NavLink
-                to="/dashboard/election-list"
-                className={({ isActive }) =>
-                  `block p-3 rounded-lg cursor-pointer transition ${
-                    isActive ? "bg-blue-700" : "hover:bg-blue-700"
-                  }`
-                }
-              >
-                Elections
-              </NavLink>
-            </li>
-            <li>
+            <NavLink to= "/dashboard/CandidateApplication"
+            className={({ isActive }) =>
+              `block p-3 rounded-lg cursor-pointer transition ${
+                isActive ? "bg-blue-700" : "hover:bg-blue-700"
+              }`
+            }
+            
+            >
+              Elections
+            </NavLink>
+            
+          </li>
+
+
+          <li>
+            <NavLink to ="/dashboard/StudentAppointment"
+            className={({ isActive }) =>
+              `block p-3 rounded-lg cursor-pointer transition ${
+                isActive ? "bg-blue-700" : "hover:bg-blue-700"
+              }`
+            }
+            >
+
+            Schedule Doctor Appointment
+            </NavLink>
+            
+          
+             
+          </li>
+        
+        
+          
+           
+          <li>
               <NavLink
                 to="/dashboard/budget-track"
                 className={({ isActive }) =>
@@ -128,18 +125,7 @@ function SidebarStudent() {
                 Complaints Posting
               </NavLink>
             </li>
-            <li>
-              <NavLink
-                to="/dashboard/settings"
-                className={({ isActive }) =>
-                  `block p-3 rounded-lg cursor-pointer transition ${
-                    isActive ? "bg-blue-700" : "hover:bg-blue-700"
-                  }`
-                }
-              >
-                Settings
-              </NavLink>
-            </li>
+            
             <li>
               <NavLink
                 to="/dashboard/campusPlaces"
@@ -162,6 +148,19 @@ function SidebarStudent() {
                 }
               >
                 Cheating Records
+              </NavLink>
+            </li>
+
+            <li>
+              <NavLink
+                to="/dashboard/settings"
+                className={({ isActive }) =>
+                  `block p-3 rounded-lg cursor-pointer transition ${
+                    isActive ? "bg-blue-700" : "hover:bg-blue-700"
+                  }`
+                }
+              >
+                Settings
               </NavLink>
             </li>
           </ul>
