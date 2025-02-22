@@ -85,7 +85,7 @@ function SidebarStudent() {
             onClick={() => navigate("/dashboard/CandidateApplication")}
             className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
           >
-            Apply for Elections
+            Elections
           </li>
         
           <li

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
 import { db, auth } from "../../firebase/firebaseConfig";
+import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 
 const CandidateApplication = () => {
   const [elections, setElections] = useState([]);
@@ -15,12 +16,15 @@ const CandidateApplication = () => {
     cgpa: "",
     whyApply: "",
     goals: "",
+    role: "", // Add role field to formData
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [view, setView] = useState("upcoming");
   const [totalApplications, setTotalApplications] = useState([]);
   const [userApplications, setUserApplications] = useState([]);
+
+  const navigate = useNavigate(); // Initialize useNavigate
 
   // Fetch elections on component mount
   useEffect(() => {
@@ -44,6 +48,17 @@ const CandidateApplication = () => {
       fetchUserApplications();
     }
   }, [view]);
+
+  // Fetch the logged-in user's email and set it in the formData
+  useEffect(() => {
+    const user = auth.currentUser;
+    if (user) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        email: user.email,
+      }));
+    }
+  }, []);
 
   const fetchTotalApplications = async () => {
     try {
@@ -84,6 +99,10 @@ const CandidateApplication = () => {
 
   const handleApplyClick = (election) => {
     setSelectedElection(election);
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      role: election.role, // Set the role based on the selected election
+    }));
     setView("apply");
   };
 
@@ -114,6 +133,7 @@ const CandidateApplication = () => {
         email: user.email,
         electionId: selectedElection.id,
         electionName: selectedElection.name,
+        role: selectedElection.role, // Include the role in the document
         status: "Pending",
         appliedAt: new Date().toISOString(),
       });
@@ -121,13 +141,14 @@ const CandidateApplication = () => {
       setFormData({
         name: "",
         rollNumber: "",
-        email: "",
+        email: user.email, // Keep the email field populated
         mobile: "",
         courseYear: "",
         branch: "",
         cgpa: "",
         whyApply: "",
         goals: "",
+        role: "", // Reset the role field
       });
       await fetchUserApplications();
       setTimeout(() => {
@@ -184,6 +205,10 @@ const CandidateApplication = () => {
             <p className="font-medium">{application.cgpa}</p>
           </div>
           <div>
+            <p className="text-gray-600">Role</p>
+            <p className="font-medium">{application.role}</p>
+          </div>
+          <div>
             <p className="text-gray-600">Applied On</p>
             <p className="font-medium">
               {new Date(application.appliedAt).toLocaleDateString()}
@@ -202,8 +227,33 @@ const CandidateApplication = () => {
     );
   };
 
+  // Function to handle navigation to the voting page
+  const handleGiveVoteClick = () => {
+    navigate("/voting"); // Navigate to the voting page
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center p-6">
+      {/* "Give Vote !" Button */}
+      <button
+  onClick={handleGiveVoteClick}
+  className="fixed right-6 top-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl flex items-center space-x-2"
+>
+  <span>Give Vote !</span>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="h-5 w-5"
+    viewBox="0 0 20 20"
+    fill="currentColor"
+  >
+    <path
+      fillRule="evenodd"
+      d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
+      clipRule="evenodd"
+    />
+  </svg>
+</button>
+
       <div className="flex gap-4 mb-6">
         <button
           onClick={() => handleViewChange("upcoming")}
@@ -270,6 +320,9 @@ const CandidateApplication = () => {
                     Election
                   </th>
                   <th className="px-6 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    Role
+                  </th>
+                  <th className="px-6 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     Status
                   </th>
                 </tr>
@@ -279,6 +332,7 @@ const CandidateApplication = () => {
                   <tr key={application.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 border-b border-gray-200">{application.name}</td>
                     <td className="px-6 py-4 border-b border-gray-200">{application.electionName}</td>
+                    <td className="px-6 py-4 border-b border-gray-200">{application.role}</td>
                     <td className="px-6 py-4 border-b border-gray-200">
                       <span className={`px-2 py-1 rounded-full text-sm ${
                         application.status === "Pending" ? "bg-yellow-100 text-yellow-800" :
@@ -343,6 +397,7 @@ const CandidateApplication = () => {
                     onChange={handleChange}
                     className="w-full px-4 py-2 border rounded-lg"
                     required
+                    disabled={key === "email" || key === "role"} // Disable email and role fields
                   />
                 )}
               </div>

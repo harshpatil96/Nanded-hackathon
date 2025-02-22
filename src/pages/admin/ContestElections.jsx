@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { collection, addDoc, getDocs, deleteDoc, doc } from "firebase/firestore";
+import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase/firebaseConfig";
 
 const ContestElections = () => {
@@ -10,6 +10,7 @@ const ContestElections = () => {
   const [votingTime, setVotingTime] = useState({ start: "", end: "" });
   const [error, setError] = useState("");
   const [elections, setElections] = useState([]);
+  const [candidates, setCandidates] = useState([]); // State to store candidate applications
 
   // Fetch elections from Firestore
   const fetchElections = async () => {
@@ -26,24 +27,33 @@ const ContestElections = () => {
     }
   };
 
+  // Fetch candidate applications from Firestore
+  const fetchCandidates = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "candidates"));
+      const candidatesData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setCandidates(candidatesData);
+    } catch (error) {
+      console.error("Error fetching candidates:", error);
+      setError("Failed to fetch candidate applications. Please try again.");
+    }
+  };
+
   useEffect(() => {
     fetchElections();
+    fetchCandidates(); // Fetch candidates when the component mounts
   }, []);
 
   // Handle delete election
   const handleDeleteElection = async (electionId) => {
     try {
-      // Show confirmation dialog
       const confirmDelete = window.confirm("Are you sure you want to delete this election?");
-      
       if (confirmDelete) {
-        // Delete the document from Firestore
         await deleteDoc(doc(db, "elections", electionId));
-        
-        // Update the local state by removing the deleted election
-        setElections(elections.filter(election => election.id !== electionId));
-        
-        // Show success message
+        setElections(elections.filter((election) => election.id !== electionId));
         alert("Election deleted successfully!");
       }
     } catch (error) {
@@ -62,12 +72,20 @@ const ContestElections = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    if (!electionName || roles.length === 0 || !applicationDates.start || !applicationDates.end || !votingDate || !votingTime.start || !votingTime.end) {
+
+    if (
+      !electionName ||
+      roles.length === 0 ||
+      !applicationDates.start ||
+      !applicationDates.end ||
+      !votingDate ||
+      !votingTime.start ||
+      !votingTime.end
+    ) {
       setError("Please fill all required fields.");
       return;
     }
-  
+
     try {
       const electionPromises = roles.map(async (role) => {
         return addDoc(collection(db, "elections"), {
@@ -78,22 +96,50 @@ const ContestElections = () => {
           votingTime: votingTime,
         });
       });
-  
+
       await Promise.all(electionPromises);
       alert("Election created successfully!");
-  
+
       setElectionName("");
       setRoles([]);
       setApplicationDates({ start: "", end: "" });
       setVotingDate("");
       setVotingTime({ start: "", end: "" });
       setError("");
-  
-      // Refresh elections list
+
       await fetchElections();
     } catch (error) {
       console.error("Error adding document: ", error);
       setError("Failed to create election. Please try again.");
+    }
+  };
+
+  // Handle accept application
+  const handleAcceptApplication = async (candidateId) => {
+    try {
+      await updateDoc(doc(db, "candidates", candidateId), {
+        status: "Accepted",
+      });
+      alert("Application accepted successfully!");
+      await fetchCandidates(); // Refresh the candidates list
+    } catch (error) {
+      console.error("Error accepting application:", error);
+      setError("Failed to accept application. Please try again.");
+    }
+  };
+
+  // Handle reject application
+  const handleRejectApplication = async (candidateId) => {
+    try {
+      const confirmReject = window.confirm("Are you sure you want to reject this application?");
+      if (confirmReject) {
+        await deleteDoc(doc(db, "candidates", candidateId));
+        alert("Application rejected successfully!");
+        await fetchCandidates(); // Refresh the candidates list
+      }
+    } catch (error) {
+      console.error("Error rejecting application:", error);
+      setError("Failed to reject application. Please try again.");
     }
   };
 
@@ -241,6 +287,72 @@ const ContestElections = () => {
               >
                 Delete Election
               </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Candidate Applications */}
+      <div className="w-full max-w-6xl mt-8">
+        <h2 className="text-2xl font-bold text-blue-800 mb-6">Candidate Applications</h2>
+        <div className="space-y-4">
+          {candidates.map((candidate) => (
+            <div
+              key={candidate.id}
+              className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+            >
+              <h3 className="text-lg font-bold text-blue-800 mb-2">{candidate.name}</h3>
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <p className="text-gray-700">
+                  <strong>Roll Number:</strong> {candidate.rollNumber}
+                </p>
+                <p className="text-gray-700">
+                  <strong>Email:</strong> {candidate.email}
+                </p>
+                <p className="text-gray-700">
+                  <strong>Mobile:</strong> {candidate.mobile}
+                </p>
+                <p className="text-gray-700">
+                  <strong>Branch:</strong> {candidate.branch}
+                </p>
+                <p className="text-gray-700">
+                  <strong>Course Year:</strong> {candidate.courseYear}
+                </p>
+                <p className="text-gray-700">
+                  <strong>CGPA:</strong> {candidate.cgpa}
+                </p>
+                <p className="text-gray-700">
+                  <strong>Role:</strong> {candidate.role}
+                </p>
+                <p className="text-gray-700">
+                  <strong>Status:</strong>{" "}
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs ${
+                      candidate.status === "Pending"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : candidate.status === "Accepted"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                    }`}
+                  >
+                    {candidate.status}
+                  </span>
+                </p>
+              </div>
+              <div className="flex gap-2 mt-3">
+                <button
+                  onClick={() => handleAcceptApplication(candidate.id)}
+                  className="flex-1 bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg text-sm shadow-md transition-transform transform hover:scale-105"
+                >
+                  Accept
+                </button>
+                <button
+                  onClick={() => handleRejectApplication(candidate.id)}
+                  className="flex-1 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg text-sm shadow-md transition-transform transform hover:scale-105"
+                >
+                  Reject
+                </button>
+              </div>
             </div>
           ))}
         </div>
