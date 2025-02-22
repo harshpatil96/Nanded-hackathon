@@ -428,26 +428,27 @@ import { motion, AnimatePresence } from "framer-motion";
 import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
 import { db, auth } from "../../firebase/firebaseConfig";
 import { useNavigate } from "react-router-dom";
-import { 
-  Vote, 
-  CheckCircle, 
-  AlertTriangle, 
-  XCircle, 
-  ChevronRight, 
-  Calendar, 
-  User, 
-  Mail, 
-  Phone, 
-  BookOpen, 
-  GraduationCap, 
-  Award, 
-  FileText, 
-  Target 
+import {
+  Vote,
+  CheckCircle,
+  AlertTriangle,
+  XCircle,
+  ChevronRight,
+  Calendar,
+  User,
+  Mail,
+  Phone,
+  BookOpen,
+  GraduationCap,
+  Award,
+  FileText,
+  Target
 } from "lucide-react";
 
 const CandidateApplication = () => {
   const [elections, setElections] = useState([]);
   const [selectedElection, setSelectedElection] = useState(null);
+  const [userRole, setUserRole] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     rollNumber: "",
@@ -468,7 +469,21 @@ const CandidateApplication = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const navigate = useNavigate();
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        // Fetch user role from Firestore or Firebase Auth custom claims
+        const userDoc = await getDocs(query(collection(db, "users"), where("uid", "==", user.uid)));
+        if (!userDoc.empty) {
+          const userData = userDoc.docs[0].data();
+          setUserRole(userData.role); // Set the user role
+        }
+      }
+    };
 
+    fetchUserRole();
+  }, []);
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -783,8 +798,8 @@ const CandidateApplication = () => {
               whileTap="tap"
               onClick={() => handleViewChange(viewOption)}
               className={`px-6 py-2 rounded-xl font-medium transition-all duration-300 flex items-center gap-2
-                ${view === viewOption 
-                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md" 
+                ${view === viewOption
+                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md"
                   : "bg-white text-gray-700 hover:bg-gray-50"}`}
             >
               {viewOption === "upcoming" && <Calendar className="w-5 h-5" />}
@@ -868,21 +883,26 @@ const CandidateApplication = () => {
                             <span>{election.votingDate}</span>
                           </div>
                         </div>
-                        <motion.button
-                          variants={buttonVariants}
-                          whileHover="hover"
-                          whileTap="tap"
-                          onClick={() => handleApplyClick(election)}
-                          className="mt-6 w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white py-2 px-4 rounded-lg font-medium flex items-center justify-center gap-2"
-                        >
-                          <span>Apply Now</span>
-                          <ChevronRight className="w-5 h-5" />
-                        </motion.button>
+
+                        {/* Apply Now Button - Visible only for students */}
+                        {userRole === "student" && (
+                          <motion.button
+                            variants={buttonVariants}
+                            whileHover="hover"
+                            whileTap="tap"
+                            onClick={() => handleApplyClick(election)}
+                            className="mt-6 w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white py-2 px-4 rounded-lg font-medium flex items-center justify-center gap-2"
+                          >
+                            <span>Apply Now</span>
+                            <ChevronRight className="w-5 h-5" />
+                          </motion.button>
+                        )}
                       </motion.div>
                     ))}
                   </div>
                 </>
               )}
+
 
               {view === "total" && (
                 <>
@@ -911,9 +931,8 @@ const CandidateApplication = () => {
                               <td className="px-6 py-4">{application.electionName}</td>
                               <td className="px-6 py-4">{application.role}</td>
                               <td className="px-6 py-4">
-                                <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${
-                                  statusColors[application.status]
-                                }`}>
+                                <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${statusColors[application.status]
+                                  }`}>
                                   {statusIcons[application.status]}
                                   {application.status}
                                 </span>
@@ -927,7 +946,7 @@ const CandidateApplication = () => {
                 </>
               )}
 
-              {view === "your" && (
+              {view === "your" && userRole === "student" && (
                 <>
                   <h1 className="text-4xl font-bold text-blue-800 mb-8 text-center">
                     Your Applications

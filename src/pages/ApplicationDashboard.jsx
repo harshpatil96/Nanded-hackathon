@@ -64,7 +64,7 @@ const ApplicationDashboard = () => {
   };
 
   const handleApproval = async (id, status) => {
-    if (userRole === "HOD") {
+    if (userRole === "HOD" || userRole === "admin") {
       const applicationRef = doc(db, "applications", id);
       await updateDoc(applicationRef, { status });
       const querySnapshot = await getDocs(collection(db, "applications"));
@@ -234,7 +234,8 @@ const ApplicationDashboard = () => {
 
                       <p className="mt-2 text-gray-600">{app.description}</p>
 
-                      {userRole === "HOD" && app.status === "Pending" && (
+                      {(userRole === "HOD" || userRole === "Admin") && app.status === "Pending" && (
+
                         <div className="mt-3 flex space-x-2">
                           <motion.button
                             onClick={() => handleApproval(app.id, "Approved")}

@@ -4,8 +4,12 @@ import { auth, db } from "../../firebase/firebaseConfig";
 import { useNavigate, Outlet, NavLink } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { motion } from "framer-motion";
+import { MessageSquare } from "lucide-react";
+
 import {
   Home,
+  Vote,
+  DollarSign,
   AlertTriangle,
   LogOut,Calendar
 } from "lucide-react";
@@ -45,7 +49,11 @@ function SidebarFac() {
   const navItems = [
     { to: "/dashboard/home", icon: <Home size={20} />, label: "Home" },
     { to: "/dashboard/Cheating", icon: <AlertTriangle size={20} />, label: "Cheating Records" },
-    { to: "/dashboard/LeaveApplication",icon: <Calendar size={20} />, label: "Leave Application" }
+    { to: "/dashboard/LeaveApplication",icon: <Calendar size={20} />, label: "Leave Application" },
+    { to: "/dashboard/CandidateApplication", icon: <Vote size={20} />, label: "Elections" },
+    { to: "/dashboard/budget-track", icon: <DollarSign size={20} />, label: "Budget Tracking" },
+    { to: "/dashboard/complaints", icon: <MessageSquare size={20} />, label: "Complaints" },
+    { to: "/dashboard/Cheating", icon: <AlertTriangle size={20} />, label: "Cheating Records" },
   ];
 
   return (
