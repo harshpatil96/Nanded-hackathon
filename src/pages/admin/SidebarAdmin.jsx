@@ -62,6 +62,36 @@ function SidebarAdmin() {
           >
             Elections
           </li>
+          <li
+            onClick={() => navigate("/dashboard/budget-track")}
+            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
+          >
+            Budget Tracking
+          </li>
+          <li
+            onClick={() => navigate("/dashboard/complaints")}
+            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
+          >
+            Complaints
+          </li>
+          <li
+            onClick={() => navigate("/dashboard/settings")}
+            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
+          >
+            Settings
+          </li>
+          <li
+            onClick={() => navigate("/dashboard/campusPlaces")}
+            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
+          >
+            Campus Places Booking
+          </li>
+          <li
+            onClick={() => navigate("/dashboard/CheatingRecStd")}
+            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
+          >
+            Cheating Records
+          </li>
         
           <li
             onClick={handleLogout}
