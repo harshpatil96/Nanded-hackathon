@@ -19,7 +19,12 @@ import SidebarFac from "./pages/faculty/SidebarFac";
 import CheatingRecStd from "./pages/student/CheatingRecStd";
 import ContestElections from "./pages/admin/ContestElections";
 import CandidateApplication from "./pages/student/CandidateApplication";
+import StudentAppoinment from "./pages/student/StudentAppointment.jsx";
+import DoctorDashboard from "./pages/doctor/DoctorDashboard.jsx";
+import SidebarDoc from "./pages/doctor/SidebarDoc.jsx";
+import Voting from "./pages/student/Voting";
 import ApplicationDashboard from "./pages/ApplicationDashboard.jsx";
+
 
 // Placeholder components for other pages
 function HomePage() {
@@ -66,16 +71,16 @@ function App() {
           {role === "admin" && <SidebarAdmin />}
           {role === "HOD" && <SidebarHod />}
           {role === "faculty" && <SidebarFac />}
-
+          {role === "doctor" && <SidebarDoc />}
           {/* Main content changes dynamically */}
           <div className="flex-1 p-6 overflow-y-auto">
             <Routes>
               <Route path="/dashboard/home" element={<HomePage />} />
               <Route path="/dashboard/student-info" element={<StudentInfo />} />
               <Route path="/dashboard/election-list" element={<ElectionList />} />
-              <Route path="/election/:electionId" element={<ElectionDetails />} />
+              
               <Route path="/dashboard/budget-track" element={<BudgetDashboard />} />
-              <Route path="/dashboard/complaints" element={<ComplaintForm />} />
+              <Route path="/dashboard/complaints" element={<ComplaintForm />} />      
               <Route path="/dashboard/ApplicationApproval" element={<ApplicationDashboard />} />
               
              
@@ -85,7 +90,9 @@ function App() {
               <Route path="/dashboard/CheatingRecStd" element={<CheatingRecStd />} />
               <Route path="/dashboard/ContestElections" element={<ContestElections />} />
               <Route path="/dashboard/CandidateApplication" element={<CandidateApplication />} />
-              <Route path="/" element={<Navigate to="/dashboard/home" />} />
+              <Route path="/voting" element={<Voting />} />
+              <Route path="/dashboard/StudentAppointment" element={<StudentAppoinment />} />
+              <Route path="/dashboard/DoctorDashboard" element={<DoctorDashboard />} />
             </Routes>
           </div>
         </div>
