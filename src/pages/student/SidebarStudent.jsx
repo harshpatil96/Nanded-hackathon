@@ -63,13 +63,6 @@ function SidebarStudent() {
               Student Info
             </li>
          
-          
-            <li
-              onClick={() => navigate("/dashboard/election-list")}
-              className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
-            >
-              Elections
-            </li>
         
         
             <li
@@ -95,14 +88,7 @@ function SidebarStudent() {
             >
               Settings
             </li>
-       
-        
-          <li
-            onClick={() => navigate("/dashboard/student-info")}
-            className="p-3 rounded-lg cursor-pointer hover:bg-blue-700 transition"
-          >
-            Student Info
-          </li>
+      
         
 
         {/* Settings - Only visible to "admin" role */}

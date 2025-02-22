@@ -7,7 +7,6 @@ import Login from "./components/Login";
 import SidebarStudent from "./pages/student/SidebarStudent";
 import SidebarAdmin from "./pages/admin/SidebarAdmin";
 import ElectionList from "./pages/Electionlist";
-import ElectionDetails from "./pages/ElectionDetails";
 import BudgetDashboard from "./pages/BudgetDashboard";
 import ComplaintForm from "./components/ComplaintForm.jsx";
 import StudentInfo from "./pages/student/StudentInfo";
@@ -73,7 +72,7 @@ function App() {
               <Route path="/dashboard/home" element={<HomePage />} />
               <Route path="/dashboard/student-info" element={<StudentInfo />} />
               <Route path="/dashboard/election-list" element={<ElectionList />} />
-              <Route path="/election/:electionId" element={<ElectionDetails />} />
+              
               <Route path="/dashboard/budget-track" element={<BudgetDashboard />} />
               <Route path="/dashboard/complaints" element={<ComplaintForm />} />
               
