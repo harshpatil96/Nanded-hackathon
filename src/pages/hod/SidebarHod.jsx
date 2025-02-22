@@ -52,9 +52,12 @@ function SidebarHod() {
 
   const navItems = [
     { to: "/dashboard/home", icon: <Home size={20} />, label: "Home" },
+    { to: "/dashboard/CandidateApplication", icon: <Vote size={20} />, label: "Elections" },
+    { to: "/dashboard/budget-track", icon: <DollarSign size={20} />, label: "Budget Tracking" },
+    { to: "/dashboard/complaints", icon: <MessageSquare size={20} />, label: "Complaints" },
     { to: "/dashboard/CampusPlacesReq", icon: <Building2 size={20} />, label: "Campus Places Booking" },
     { to: "/dashboard/ApplicationApproval", icon: <FileCheck size={20} />, label: "Application Approval" },
-    { to: "/dashboard/settings", icon: <Settings size={20} />, label: "Settings" }
+   
   ];
 
   return (
@@ -86,14 +89,12 @@ function SidebarHod() {
           </motion.div>
 
           <div className="space-y-2">
-            {navItems.map((item) => (
+            {navItems.map((item, index) => (
               <NavLink
-                key={item.to}
+                key={`${item.to}-${index}`}  // Unique key
                 to={item.to}
                 className={({ isActive }) =>
-                  `flex items-center p-3 rounded-lg transition-all transform hover:scale-105 ${isActive
-                    ? "bg-blue-700 text-white"
-                    : "hover:bg-blue-800"
+                  `flex items-center p-3 rounded-lg transition-all transform hover:scale-105 ${isActive ? "bg-blue-700 text-white" : "hover:bg-blue-800"
                   }`
                 }
               >

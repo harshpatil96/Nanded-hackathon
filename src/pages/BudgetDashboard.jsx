@@ -109,7 +109,7 @@ const Dashboard = () => {
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h3 className="text-xl font-semibold text-gray-700 mb-4">Add/Edit Budget</h3>
 
-          {(role === "faculty" || role === "hod" || role === "admin") ? (
+          {( role === "admin") ? (
             showForm ? (
               <BudgetForm existingBudget={selectedBudget} onClose={handleCloseForm} />
             ) : (

@@ -23,6 +23,7 @@ import DoctorDashboard from "./pages/doctor/DoctorDashboard.jsx";
 import SidebarDoc from "./pages/doctor/SidebarDoc.jsx";
 import Voting from "./pages/student/Voting";
 import ApplicationDashboard from "./pages/ApplicationDashboard.jsx";
+import InventoryList from "./components/InventoryList.jsx";
 
 
 // Placeholder components for other pages
@@ -81,6 +82,7 @@ function App() {
               <Route path="/dashboard/budget-track" element={<BudgetDashboard />} />
               <Route path="/dashboard/complaints" element={<ComplaintForm />} />      
               <Route path="/dashboard/ApplicationApproval" element={<ApplicationDashboard />} />
+              <Route path="/dashboard/inventory" element={<InventoryList />} />
               
              
               <Route path="/dashboard/campusPlaces" element={<CampusPlaces />} />

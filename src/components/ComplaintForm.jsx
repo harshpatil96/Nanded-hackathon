@@ -192,6 +192,7 @@ const ComplaintForm = () => {
         className="bg-white rounded-xl shadow-xl overflow-hidden"
       >
         <div className="p-6">
+        {userRole === "student" && isFormOpen && (
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -201,9 +202,9 @@ const ComplaintForm = () => {
             {isFormOpen ? <X className="w-5 h-5" /> : <Send className="w-5 h-5" />}
             {isFormOpen ? "Close Form" : "Submit New Complaint"}
           </motion.button>
-
+        )}
           <AnimatePresence>
-            {isFormOpen && (
+            {userRole === "student" && isFormOpen && (
               <motion.div
                 variants={formVariants}
                 initial="hidden"
@@ -305,6 +306,7 @@ const ComplaintForm = () => {
                 </div>
               </motion.div>
             )}
+
           </AnimatePresence>
 
           <div className="mt-8">
@@ -343,9 +345,8 @@ const ComplaintForm = () => {
                         ) : (
                           <CheckCircle className="w-5 h-5 text-green-500" />
                         )}
-                        <span className={`font-medium ${
-                          complaint.status === "Pending" ? "text-yellow-500" : "text-green-500"
-                        }`}>
+                        <span className={`font-medium ${complaint.status === "Pending" ? "text-yellow-500" : "text-green-500"
+                          }`}>
                           {complaint.status}
                         </span>
                       </div>
