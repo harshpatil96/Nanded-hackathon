@@ -6,6 +6,10 @@ import { auth, db } from "./firebase/firebaseConfig"; // Firebase config
 import Login from "./components/Login";
 import SidebarStudent from "./pages/student/SidebarStudent";
 import SidebarAdmin from "./pages/admin/SidebarAdmin";
+import ElectionList from "./pages/Electionlist";
+import ElectionDetails from "./pages/ElectionDetails";
+import BudgetDashboard from "./pages/BudgetDashboard";
+import ComplaintForm from "./components/ComplaintForm.jsx";
 import StudentInfo from "./pages/student/StudentInfo";
 import CampusPlaces from "./pages/student/CampusPlaces";
 import CampusPlacesReq from "./pages/hod/CampusPlacesReq";
@@ -16,7 +20,6 @@ import CheatingRecStd from "./pages/student/CheatingRecStd";
 import ContestElections from "./pages/admin/ContestElections";
 import CandidateApplication from "./pages/student/CandidateApplication";
 import Voting from "./pages/student/Voting";
-
 
 // Placeholder components for other pages
 function HomePage() {
@@ -69,6 +72,12 @@ function App() {
             <Routes>
               <Route path="/dashboard/home" element={<HomePage />} />
               <Route path="/dashboard/student-info" element={<StudentInfo />} />
+              <Route path="/dashboard/election-list" element={<ElectionList />} />
+              <Route path="/election/:electionId" element={<ElectionDetails />} />
+              <Route path="/dashboard/budget-track" element={<BudgetDashboard />} />
+              <Route path="/dashboard/complaints" element={<ComplaintForm />} />
+              
+             
               <Route path="/dashboard/campusPlaces" element={<CampusPlaces />} />
               <Route path="/dashboard/CampusPlacesReq" element={<CampusPlacesReq />} />
               <Route path="/dashboard/Cheating" element={<CheatingRecordsForm />} />
