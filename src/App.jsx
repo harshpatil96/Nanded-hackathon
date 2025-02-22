@@ -7,7 +7,6 @@ import Login from "./components/Login";
 import SidebarStudent from "./pages/student/SidebarStudent";
 import SidebarAdmin from "./pages/admin/SidebarAdmin";
 import ElectionList from "./pages/Electionlist";
-import ElectionDetails from "./pages/ElectionDetails";
 import BudgetDashboard from "./pages/BudgetDashboard";
 import ComplaintForm from "./components/ComplaintForm.jsx";
 import StudentInfo from "./pages/student/StudentInfo";
@@ -22,6 +21,8 @@ import CandidateApplication from "./pages/student/CandidateApplication";
 import StudentAppointment from "./pages/student/StudentAppointment.jsx";
 import DoctorDashboard from "./pages/doctor/DoctorDashboard.jsx";
 import SidebarDoc from "./pages/doctor/SidebarDoc.jsx";
+import Voting from "./pages/student/Voting";
+
 // Placeholder components for other pages
 function HomePage() {
   return <h1 className="text-3xl font-bold text-center mt-10">Welcome to Home Page</h1>;
@@ -75,7 +76,7 @@ function App() {
               <Route path="/dashboard/home" element={<HomePage />} />
               <Route path="/dashboard/student-info" element={<StudentInfo />} />
               <Route path="/dashboard/election-list" element={<ElectionList />} />
-              <Route path="/election/:electionId" element={<ElectionDetails />} />
+              
               <Route path="/dashboard/budget-track" element={<BudgetDashboard />} />
               <Route path="/dashboard/complaints" element={<ComplaintForm />} />
               
@@ -86,6 +87,7 @@ function App() {
               <Route path="/dashboard/CheatingRecStd" element={<CheatingRecStd />} />
               <Route path="/dashboard/ContestElections" element={<ContestElections />} />
               <Route path="/dashboard/CandidateApplication" element={<CandidateApplication />} />
+              <Route path="/voting" element={<Voting />} />
               <Route path="/" element={<Navigate to="/dashboard/home" />} />
               <Route path="/dashboard/StudentAppointment" element={<StudentAppointment />} />
               <Route path="/dashboard/DoctorDashboard" element={<DoctorDashboard />} />
