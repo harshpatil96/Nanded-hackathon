@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import PropTypes from "prop-types";
 import { motion, AnimatePresence } from "framer-motion";
 import { db } from "../firebase/firebaseConfig";
 import {
@@ -30,6 +31,7 @@ const ComplaintForm = () => {
   const auth = getAuth();
   const filter = new Filter();
 
+  // Fetch complaints from Firestore
   useEffect(() => {
     const q = query(collection(db, "complaints"), orderBy("timestamp", "desc"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -43,8 +45,9 @@ const ComplaintForm = () => {
     return () => unsubscribe();
   }, []);
 
+  // Fetch user role
   useEffect(() => {
-    onAuthStateChanged(auth, async (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         const userDoc = await getDoc(doc(db, "users", user.uid));
         if (userDoc.exists()) {
@@ -52,8 +55,11 @@ const ComplaintForm = () => {
         }
       }
     });
-  }, []);
 
+    return () => unsubscribe();
+  }, [auth]);
+
+  // Handle image upload
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -66,6 +72,7 @@ const ComplaintForm = () => {
     }
   };
 
+  // Handle complaint submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -105,6 +112,7 @@ const ComplaintForm = () => {
     }
   };
 
+  // Handle resolving a complaint
   const handleResolve = async (id, resolutionText) => {
     try {
       await updateDoc(doc(db, "complaints", id), {
@@ -120,6 +128,7 @@ const ComplaintForm = () => {
     }
   };
 
+  // Handle deleting a complaint
   const handleDelete = async (id) => {
     try {
       await deleteDoc(doc(db, "complaints", id));
@@ -128,36 +137,47 @@ const ComplaintForm = () => {
     }
   };
 
+  // Animation variants
   const formVariants = {
     hidden: { opacity: 0, y: -20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
   };
 
   const complaintVariants = {
     hidden: { opacity: 0, x: -20 },
-    visible: { opacity: 1, x: 0 }
+    visible: { opacity: 1, x: 0 },
   };
 
+  // Resolution input component
   const ResolutionInput = ({ complaintId, onResolve, onCancel, resolutionText, setResolutionText }) => {
+    const textareaRef = useRef(null); // Create a ref for the textarea
+
+    // Focus the textarea when the component mounts
+    useEffect(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+      }
+    }, []);
+
     return (
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
-        className="mt-4 p-4 bg-gray-50 rounded-lg"
-      >
-        <textarea
+      <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+        <input
+          ref={textareaRef}
           value={resolutionText}
           onChange={(e) => setResolutionText(e.target.value)}
           placeholder="Describe the actions taken to resolve the complaint..."
           className="w-full p-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 resize-none"
           rows={4}
+          style={{
+            fontSize: "16px",
+            lineHeight: "1.5",
+            textAlign: "left", // Ensure text aligns to the left
+            direction: "ltr", // Ensure left-to-right text direction
+          }}
           required
         />
         <div className="mt-4 flex gap-2">
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+          <button
             onClick={() => {
               onResolve(complaintId, resolutionText);
               setResolutionText("");
@@ -166,10 +186,8 @@ const ComplaintForm = () => {
           >
             <CheckCircle className="w-4 h-4" />
             <span>Submit Resolution</span>
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+          </button>
+          <button
             onClick={() => {
               onCancel();
               setResolutionText("");
@@ -178,10 +196,19 @@ const ComplaintForm = () => {
           >
             <X className="w-4 h-4" />
             <span>Cancel</span>
-          </motion.button>
+          </button>
         </div>
-      </motion.div>
+      </div>
     );
+  };
+
+  // Add PropTypes validation for ResolutionInput
+  ResolutionInput.propTypes = {
+    complaintId: PropTypes.string.isRequired,
+    onResolve: PropTypes.func.isRequired,
+    onCancel: PropTypes.func.isRequired,
+    resolutionText: PropTypes.string.isRequired,
+    setResolutionText: PropTypes.func.isRequired,
   };
 
   return (

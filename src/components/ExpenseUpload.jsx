@@ -1,35 +1,71 @@
-import React, { useState } from "react";
-import { uploadExpenseProof } from "../firebase/expenseServices";
+import { useState } from "react";
+import { db } from "../firebase/firebaseConfig"; // Import Firestore
+import { collection, addDoc } from "firebase/firestore"; // Import Firestore functions
 
 const ExpenseUpload = () => {
   const [file, setFile] = useState(null);
   const [expenseData, setExpenseData] = useState({
     title: "",
+    amount: 0,
+    imageBase64: "", // Store base64 image
     amount: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
 
+  // Handle input changes
   const handleChange = (e) => {
     setExpenseData({ ...expenseData, [e.target.name]: e.target.value });
   };
 
+  // Handle file selection and convert to Base64
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      const reader = new FileReader();
+      reader.readAsDataURL(selectedFile);
+      reader.onload = () => {
+        setExpenseData((prev) => ({ ...prev, imageBase64: reader.result }));
+      };
+      setFile(selectedFile);
+    }
+  };
+
+  // Handle form submission
   const handleUpload = async () => {
-    if (!file) return alert("Please select a file!");
+    if (!file) {
+      setError("Please select a file!");
+      return;
+    }
     if (!expenseData.title || !expenseData.amount) {
-      return alert("Please fill in all fields!");
+      setError("Please fill in all fields.");
+      return;
     }
 
-    setUploading(true);
+    setIsLoading(true);
+    setError("");
+
     try {
-      const url = await uploadExpenseProof(file, expenseData);
-      alert("Proof uploaded successfully!");
-      setExpenseData({ title: "", amount: "" });
+      // Save the expense data (including Base64 image) to Firestore
+      const docRef = await addDoc(collection(db, "expenses"), {
+        title: expenseData.title,
+        amount: expenseData.amount,
+        imageBase64: expenseData.imageBase64, // Store Base64 image
+        timestamp: new Date(),
+      });
+
+      console.log("Expense proof uploaded with ID:", docRef.id);
+      alert("Expense proof uploaded successfully!");
+
+      // Reset form
+      setExpenseData({ title: "", amount: 0, imageBase64: "" });
       setFile(null);
     } catch (error) {
-      alert("Upload failed. Check console for details.");
       console.error("Upload error:", error);
+      setError("Upload failed. Please try again.");
     } finally {
-      setUploading(false);
+      setIsLoading(false);
     }
   };
 
@@ -39,6 +75,7 @@ const ExpenseUpload = () => {
         Upload Expense Proof
       </h2>
 
+      {/* Expense Title */}
       <input
         type="text"
         name="title"
@@ -48,6 +85,7 @@ const ExpenseUpload = () => {
         className="w-full px-4 py-2 mb-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
       />
 
+      {/* Amount Spent */}
       <input
         type="number"
         name="amount"
@@ -57,20 +95,25 @@ const ExpenseUpload = () => {
         className="w-full px-4 py-2 mb-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
       />
 
+      {/* File Input */}
       <input
         type="file"
-        onChange={(e) => setFile(e.target.files[0])}
+        onChange={handleFileChange}
         className="w-full px-4 py-2 mb-3 border border-gray-300 rounded-lg file:bg-blue-600 file:text-white file:py-2 file:px-4 file:rounded-md file:border-0 file:cursor-pointer hover:file:bg-blue-700"
       />
 
+      {/* Error Message */}
+      {error && (
+        <div className="text-red-500 text-sm mb-3 text-center">{error}</div>
+      )}
+
+      {/* Upload Button */}
       <button
         onClick={handleUpload}
-        disabled={uploading}
-        className={`w-full py-2 mt-3 font-semibold text-white rounded-lg ${
-          uploading ? "bg-gray-500 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
-        }`}
+        disabled={isLoading}
+        className="w-full py-2 mt-3 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-blue-400"
       >
-        {uploading ? "Uploading..." : "Upload Proof"}
+        {isLoading ? "Uploading..." : "Upload Proof"}
       </button>
     </div>
   );
