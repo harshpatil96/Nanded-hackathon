@@ -6,11 +6,12 @@ const ExpenseUpload = () => {
   const [file, setFile] = useState(null);
   const [expenseData, setExpenseData] = useState({
     title: "",
-    amount: 0,
     imageBase64: "", // Store base64 image
+    amount: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [uploading, setUploading] = useState(false);
 
   // Handle input changes
   const handleChange = (e) => {

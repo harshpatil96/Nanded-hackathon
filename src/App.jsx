@@ -89,7 +89,12 @@ function App() {
               <Route path="/dashboard/budget-track" element={<BudgetDashboard />} />
               <Route path="/dashboard/complaints" element={<ComplaintForm />} />
               <Route path="/dashboard/ApplicationApproval" element={<ApplicationDashboard />} />
+              
+     
+   
               <Route path="/dashboard/inventory" element={<InventoryList />} />
+             
+             
               <Route path="/dashboard/campusPlaces" element={<CampusPlaces />} />
               <Route path="/dashboard/CampusPlacesReq" element={<CampusPlacesReq />} />
               <Route path="/dashboard/Cheating" element={<CheatingRecordsForm />} />

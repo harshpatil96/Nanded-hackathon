@@ -58,7 +58,7 @@ function SidebarAdmin() {
     { to: "/dashboard/campusPlaces", icon: <Building2 size={20} />, label: "Campus Places" },
     { to: "/dashboard/CheatingRecStd", icon: <AlertTriangle size={20} />, label: "Cheating Records" },
     { to: "/dashboard/ApplicationApproval", icon: <FileCheck size={20} />, label: "Applications" },
-    { to: "/dashboard/settings", icon: <Settings size={20} />, label: "Settings" }
+    
   ];
 
   return (
