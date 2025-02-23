@@ -6,7 +6,7 @@ import { doc, getDoc } from "firebase/firestore";
 
 const BudgetTable = () => {
   const [budgets, setBudgets] = useState([]);
-  const [role, setRole] = useState(""); // Fix: Ensure correct state name
+  const [role, setRole] = useState(""); // Ensure correct state name
 
   useEffect(() => {
     fetchBudgets();
@@ -18,7 +18,7 @@ const BudgetTable = () => {
       try {
         const userDoc = await getDoc(doc(db, "users", userId));
         if (userDoc.exists()) {
-          setRole(userDoc.data().role); // Fix: Properly setting the role
+          setRole(userDoc.data().role); // Set role
         }
       } catch (error) {
         console.error("Error fetching user role:", error);
@@ -48,7 +48,7 @@ const BudgetTable = () => {
   const handleDelete = async (id) => {
     try {
       await deleteBudget(id);
-      fetchBudgets();
+      fetchBudgets(); // Reload the budgets after deletion
     } catch (error) {
       console.error("Error deleting budget:", error);
     }
@@ -76,24 +76,21 @@ const BudgetTable = () => {
               budgets.map((budget) => (
                 <tr key={budget.id} className="hover:bg-gray-100 text-center">
                   <td className="py-3 px-4 border">{budget.title}</td>
-                  <td className="py-3 px-4 border font-medium">₹{budget.allocated}</td>
-                  <td className="py-3 px-4 border font-medium text-red-600">₹{budget.spent}</td>
+                  <td className="py-3 px-4 border font-medium">₹{budget.allocated.toLocaleString()}</td>
+                  <td className="py-3 px-4 border font-medium text-red-600">₹{budget.spent.toLocaleString()}</td>
                   <td className="py-3 px-4 border font-medium text-green-600">
-                    ₹{budget.allocated - budget.spent}
+                    ₹{(budget.allocated - budget.spent).toLocaleString()}
                   </td>
                   {(role === "admin" || role === "hod") && (
-                  <td className="py-3 px-4 border">
-                    {/* Fix: Only show delete button if user is admin, faculty, or HOD */}
-                   
+                    <td className="py-3 px-4 border">
                       <button
                         onClick={() => handleDelete(budget.id)}
                         className="bg-red-500 hover:bg-red-700 text-white px-3 py-1 rounded transition-all"
                       >
                         Delete
                       </button>
-                   
-                  </td>
-                   )}
+                    </td>
+                  )}
                 </tr>
               ))
             ) : (

@@ -26,7 +26,7 @@ import LeaveApplication from "./pages/faculty/LeaveApplication.jsx";
 import ApplicationDashboard from "./pages/ApplicationDashboard.jsx";
 import InventoryList from "./components/InventoryList.jsx";
 import { InventoryProvider } from "./components/InventoryContext"; // Ensure correct import
-
+import AdminExpenseApproval from "./components/AdminExpenseApproval.jsx";
 import LandingPage from "./LandingPage.jsx";
 
 // Placeholder components for other pages
@@ -100,6 +100,7 @@ function App() {
               <Route path="/dashboard/StudentAppointment" element={<StudentAppoinment />} />
               <Route path="/dashboard/DoctorDashboard" element={<DoctorDashboard />} />
               <Route path="/dashboard/LeaveApplication" element={<LeaveApplication/>} />
+              <Route path="/dashboard/AdminExpenseApproval" element={<AdminExpenseApproval/>} />
 
               {/* Fallback route for logged-in users */}
               <Route path="*" element={<Navigate to="/dashboard/home" />} />

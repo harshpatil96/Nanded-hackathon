@@ -1,4 +1,3 @@
-// src/firebase/budgetServices.js
 import { db } from "./firebaseConfig";
 import {
   collection,
@@ -24,10 +23,21 @@ export const addBudget = async (budget) => {
 // Get all budgets
 export const getBudgets = async () => {
   try {
-    const snapshot = await getDocs(budgetCollectionRef);
-    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    const querySnapshot = await getDocs(collection(db, "budgets"));
+    return querySnapshot.docs.map((doc) => {
+      const data = doc.data();
+      const allocated = parseFloat(data.allocated) || 0; // Ensure amount is a valid number
+      const spent = parseFloat(data.spent) || 0; // Default spent = 0 if missing
+      return {
+        id: doc.id,
+        ...data,
+        allocated,
+        spent,
+      };
+    });
   } catch (error) {
     console.error("Error fetching budgets:", error);
+    return [];
   }
 };
 
