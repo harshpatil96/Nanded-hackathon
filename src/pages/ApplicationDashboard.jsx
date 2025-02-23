@@ -101,9 +101,10 @@ const ApplicationDashboard = () => {
           <h1 className="text-3xl font-bold text-gray-800">Application Dashboard</h1>
         </div>
       </motion.div>
-
+     
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Submit Application Form */}
+        {userRole === "student" && (
         <motion.div
           variants={container}
           initial="hidden"
@@ -180,7 +181,7 @@ const ApplicationDashboard = () => {
             </motion.button>
           </form>
         </motion.div>
-
+        )}
         {/* Applications Status */}
         <motion.div
           variants={container}

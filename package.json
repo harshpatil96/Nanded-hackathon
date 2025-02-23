@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@google-cloud/vision": "^4.3.2",
+    "@shadcn/ui": "^0.0.4",
     "@tailwindcss/vite": "^4.0.7",
     "bad-words": "^4.0.0",
     "chart.js": "^4.4.8",

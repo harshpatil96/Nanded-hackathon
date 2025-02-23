@@ -6,7 +6,6 @@ const ExpenseUpload = () => {
   const [file, setFile] = useState(null);
   const [expenseData, setExpenseData] = useState({
     title: "",
-    amount: 0,
     imageBase64: "", // Store base64 image
     amount: "",
   });
