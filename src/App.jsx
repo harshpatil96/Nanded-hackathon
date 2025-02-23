@@ -25,6 +25,7 @@ import Voting from "./pages/student/Voting";
 import LeaveApplication from "./pages/faculty/LeaveApplication.jsx";
 import ApplicationDashboard from "./pages/ApplicationDashboard.jsx";
 import InventoryList from "./components/InventoryList.jsx";
+import { InventoryProvider } from "./components/InventoryContext"; // Ensure correct import
 
 
 // Placeholder components for other pages
@@ -57,6 +58,7 @@ function App() {
   if (loading) return <p className="text-center text-gray-600 mt-10">Loading...</p>;
 
   return (
+    <InventoryProvider>
     <Router>
       {/* If not logged in, show only the Login page */}
       {!user ? (
@@ -75,6 +77,7 @@ function App() {
           {role === "doctor" && <SidebarDoc />}
           {/* Main content changes dynamically */}
           <div className="flex-1 p-6 overflow-y-auto">
+            
             <Routes>
               <Route path="/dashboard/home" element={<HomePage />} />
               <Route path="/dashboard/student-info" element={<StudentInfo />} />
@@ -83,8 +86,11 @@ function App() {
               <Route path="/dashboard/budget-track" element={<BudgetDashboard />} />
               <Route path="/dashboard/complaints" element={<ComplaintForm />} />      
               <Route path="/dashboard/ApplicationApproval" element={<ApplicationDashboard />} />
-              <Route path="/dashboard/inventory" element={<InventoryList />} />
               
+     
+   
+              <Route path="/dashboard/inventory" element={<InventoryList />} />
+             
              
               <Route path="/dashboard/campusPlaces" element={<CampusPlaces />} />
               <Route path="/dashboard/CampusPlacesReq" element={<CampusPlacesReq />} />
@@ -102,6 +108,7 @@ function App() {
         </div>
       )}
     </Router>
+    </InventoryProvider>
   );
 }
 
