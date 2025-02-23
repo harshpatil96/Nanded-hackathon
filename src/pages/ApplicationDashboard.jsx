@@ -96,15 +96,15 @@ const ApplicationDashboard = () => {
         animate={{ y: 0, opacity: 1 }}
         className="mb-6"
       >
-        <div className="flex items-center justify-center space-x-3">
+        <div className="flex items-center justify-center space-x-3 ">
           <FileText className="text-blue-500" size={32} />
           <h1 className="text-3xl font-bold text-gray-800">Application Dashboard</h1>
         </div>
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 ">
         {/* Submit Application Form */}
-        <motion.div
+        {/* <motion.div
           variants={container}
           initial="hidden"
           animate="show"
@@ -179,91 +179,92 @@ const ApplicationDashboard = () => {
               )}
             </motion.button>
           </form>
-        </motion.div>
+        </motion.div> */}
 
         {/* Applications Status */}
-        <motion.div
-          variants={container}
-          initial="hidden"
-          animate="show"
-          className="bg-white rounded-xl shadow-lg overflow-hidden"
-        >
-          <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-4 text-white">
-            <h2 className="text-xl font-semibold">Applications Status</h2>
-          </div>
-          
-          <div className="p-4">
-            {loading ? (
-              <div className="flex justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500" />
-              </div>
-            ) : (
-              <motion.div className="space-y-3">
-                <AnimatePresence>
-                  {applications.map((app) => (
-                    <motion.div
-                      key={app.id}
-                      variants={item}
-                      initial="hidden"
-                      animate="show"
-                      exit={{ opacity: 0, y: -20 }}
-                      className="bg-gray-50 rounded-lg p-4 hover:shadow-md transition-shadow"
+        <div className="flex justify-center items-center min-h-screen">
+  <motion.div
+    variants={container}
+    initial="hidden"
+    animate="show"
+    className="bg-white rounded-xl shadow-lg overflow-hidden w-full max-w-2xl"
+  >
+    <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-4 text-white">
+      <h2 className="text-xl font-semibold">Applications Status</h2>
+    </div>
+    
+    <div className="p-4">
+      {loading ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500" />
+        </div>
+      ) : (
+        <motion.div className="space-y-3">
+          <AnimatePresence>
+            {applications.map((app) => (
+              <motion.div
+                key={app.id}
+                variants={item}
+                initial="hidden"
+                animate="show"
+                exit={{ opacity: 0, y: -20 }}
+                className="bg-gray-50 rounded-lg p-4 hover:shadow-md transition-shadow"
+              >
+                <div className="flex justify-between items-start">
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <Briefcase size={18} className="text-gray-500" />
+                      <span className="font-medium">{app.type}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <User size={18} className="text-gray-500" />
+                      <span>{app.applicant}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Clock size={18} className="text-gray-500" />
+                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                      app.status === "Approved" ? "bg-green-100 text-green-800" :
+                      app.status === "Rejected" ? "bg-red-100 text-red-800" :
+                      "bg-yellow-100 text-yellow-800"
+                    }`}>
+                      {app.status}
+                    </span>
+                  </div>
+                </div>
+
+                <p className="mt-2 text-gray-600">{app.description}</p>
+
+                {(userRole === "HOD" || userRole === "Admin") && app.status === "Pending" && (
+                  <div className="mt-3 flex space-x-2">
+                    <motion.button
+                      onClick={() => handleApproval(app.id, "Approved")}
+                      className="flex items-center px-3 py-1 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                     >
-                      <div className="flex justify-between items-start">
-                        <div className="space-y-2">
-                          <div className="flex items-center space-x-2">
-                            <Briefcase size={18} className="text-gray-500" />
-                            <span className="font-medium">{app.type}</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <User size={18} className="text-gray-500" />
-                            <span>{app.applicant}</span>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Clock size={18} className="text-gray-500" />
-                          <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                            app.status === "Approved" ? "bg-green-100 text-green-800" :
-                            app.status === "Rejected" ? "bg-red-100 text-red-800" :
-                            "bg-yellow-100 text-yellow-800"
-                          }`}>
-                            {app.status}
-                          </span>
-                        </div>
-                      </div>
-
-                      <p className="mt-2 text-gray-600">{app.description}</p>
-
-                      {(userRole === "HOD" || userRole === "Admin") && app.status === "Pending" && (
-
-                        <div className="mt-3 flex space-x-2">
-                          <motion.button
-                            onClick={() => handleApproval(app.id, "Approved")}
-                            className="flex items-center px-3 py-1 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                          >
-                            <Check size={16} className="mr-1" />
-                            Approve
-                          </motion.button>
-                          <motion.button
-                            onClick={() => handleApproval(app.id, "Rejected")}
-                            className="flex items-center px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                          >
-                            <X size={16} className="mr-1" />
-                            Reject
-                          </motion.button>
-                        </div>
-                      )}
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
+                      <Check size={16} className="mr-1" />
+                      Approve
+                    </motion.button>
+                    <motion.button
+                      onClick={() => handleApproval(app.id, "Rejected")}
+                      className="flex items-center px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <X size={16} className="mr-1" />
+                      Reject
+                    </motion.button>
+                  </div>
+                )}
               </motion.div>
-            )}
-          </div>
+            ))}
+          </AnimatePresence>
         </motion.div>
+      )}
+    </div>
+  </motion.div>
+</div>
       </div>
     </motion.div>
   );
