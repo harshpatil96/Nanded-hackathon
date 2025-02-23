@@ -27,12 +27,12 @@ import ApplicationDashboard from "./pages/ApplicationDashboard.jsx";
 import InventoryList from "./components/InventoryList.jsx";
 import { InventoryProvider } from "./components/InventoryContext"; // Ensure correct import
 
+import LandingPage from "./LandingPage.jsx";
 
 // Placeholder components for other pages
 function HomePage() {
   return <h1 className="text-3xl font-bold text-center mt-10">Welcome to Home Page</h1>;
 }
-
 
 function App() {
   const [user, setUser] = useState(null);
@@ -63,7 +63,8 @@ function App() {
       {/* If not logged in, show only the Login page */}
       {!user ? (
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<Login />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       ) : (
@@ -79,19 +80,16 @@ function App() {
           <div className="flex-1 p-6 overflow-y-auto">
             
             <Routes>
+              {/* Default dashboard route */}
+              <Route path="/dashboard" element={<Navigate to="/dashboard/home" />} />
+              {/* Protected routes */}
               <Route path="/dashboard/home" element={<HomePage />} />
               <Route path="/dashboard/student-info" element={<StudentInfo />} />
               <Route path="/dashboard/election-list" element={<ElectionList />} />
-              
               <Route path="/dashboard/budget-track" element={<BudgetDashboard />} />
-              <Route path="/dashboard/complaints" element={<ComplaintForm />} />      
+              <Route path="/dashboard/complaints" element={<ComplaintForm />} />
               <Route path="/dashboard/ApplicationApproval" element={<ApplicationDashboard />} />
-              
-     
-   
               <Route path="/dashboard/inventory" element={<InventoryList />} />
-             
-             
               <Route path="/dashboard/campusPlaces" element={<CampusPlaces />} />
               <Route path="/dashboard/CampusPlacesReq" element={<CampusPlacesReq />} />
               <Route path="/dashboard/Cheating" element={<CheatingRecordsForm />} />
@@ -103,6 +101,8 @@ function App() {
               <Route path="/dashboard/DoctorDashboard" element={<DoctorDashboard />} />
               <Route path="/dashboard/LeaveApplication" element={<LeaveApplication/>} />
 
+              {/* Fallback route for logged-in users */}
+              <Route path="*" element={<Navigate to="/dashboard/home" />} />
             </Routes>
           </div>
         </div>

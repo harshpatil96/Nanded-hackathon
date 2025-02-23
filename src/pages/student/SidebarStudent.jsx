@@ -5,17 +5,16 @@ import { useNavigate, Outlet, NavLink } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { motion } from "framer-motion";
 import {
-  Home,
   User,
   Vote,
+  Settings,
   Calendar,
   DollarSign,
   MessageSquare,
   Building2,
   AlertTriangle,
   FileCheck,
-  Settings,
-  LogOut
+  LogOut,
 } from "lucide-react";
 
 function SidebarStudent() {
@@ -23,6 +22,7 @@ function SidebarStudent() {
   const [role, setRole] = useState("");
   const [name, setName] = useState("");
   const [isOpen, setIsOpen] = useState(true);
+  const [hasNavigated, setHasNavigated] = useState(false); // Track if navigation has occurred
 
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -38,7 +38,13 @@ function SidebarStudent() {
     };
 
     fetchUserRole();
-  }, []);
+
+    // Navigate to Student Info only once when the component mounts
+    if (!hasNavigated) {
+      navigate("/dashboard/student-info");
+      setHasNavigated(true); // Mark navigation as completed
+    }
+  }, [navigate, hasNavigated]);
 
   const handleLogout = async () => {
     await signOut(auth);
@@ -47,7 +53,7 @@ function SidebarStudent() {
 
   const sidebarVariants = {
     open: { width: "256px" },
-    closed: { width: "80px" }
+    closed: { width: "80px" },
   };
 
   const navItems = [
@@ -59,7 +65,7 @@ function SidebarStudent() {
     { to: "/dashboard/campusPlaces", icon: <Building2 size={20} />, label: "Campus Places" },
     { to: "/dashboard/CheatingRecStd", icon: <AlertTriangle size={20} />, label: "Cheating Records" },
     { to: "/dashboard/ApplicationApproval", icon: <FileCheck size={20} />, label: "Applications" },
-    { to: "/dashboard/settings", icon: <Settings size={20} />, label: "Settings" },
+    
     { to: "/dashboard/inventory", icon: <Settings size={20} />, label: "Inventory" }
   ];
 
@@ -77,14 +83,8 @@ function SidebarStudent() {
               className="text-2xl font-bold"
               animate={{ opacity: isOpen ? 1 : 0 }}
             >
-              Dashboard
+              STUDENT
             </motion.h2>
-            {/* <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="p-2 rounded-full hover:bg-blue-800 transition-colors"
-            >
-              {isOpen ? "←" : "→"}
-            </button> */}
           </div>
 
           <motion.div
@@ -103,9 +103,10 @@ function SidebarStudent() {
                 key={item.to}
                 to={item.to}
                 className={({ isActive }) =>
-                  `flex items-center p-3 rounded-lg transition-all transform hover:scale-105 ${isActive
-                    ? "bg-blue-700 text-white"
-                    : "hover:bg-blue-800"
+                  `flex items-center p-3 rounded-lg transition-all transform hover:scale-105 ${
+                    isActive
+                      ? "bg-blue-700 text-white"
+                      : "hover:bg-blue-800"
                   }`
                 }
               >

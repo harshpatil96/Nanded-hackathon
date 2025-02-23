@@ -70,7 +70,7 @@ function SidebarFac() {
               className="text-2xl font-bold"
               animate={{ opacity: isOpen ? 1 : 0 }}
             >
-              Dashboard
+              FACULTY
             </motion.h2>
           </div>
 
