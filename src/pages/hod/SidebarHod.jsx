@@ -6,13 +6,13 @@ import { doc, getDoc } from "firebase/firestore";
 import { motion } from "framer-motion";
 import {
   Home,
-  // User,
-  // Vote,
-  // Calendar,
-  // DollarSign,
-  // MessageSquare,
+  User,
+  Vote,
+  Calendar,
+  DollarSign,
+  MessageSquare,
   Building2,
-  // AlertTriangle,
+  AlertTriangle,
   FileCheck,
   Settings,
   LogOut
