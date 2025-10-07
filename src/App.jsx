@@ -28,6 +28,7 @@ import InventoryList from "./components/InventoryList.jsx";
 import { InventoryProvider } from "./components/InventoryContext"; // Ensure correct import
 import AdminExpenseApproval from "./components/AdminExpenseApproval.jsx";
 import LandingPage from "./LandingPage.jsx";
+import ProfilePage from "./components/ProfilePage.jsx";
 
 // Placeholder components for other pages
 function HomePage() {
@@ -63,8 +64,8 @@ function App() {
       {/* If not logged in, show only the Login page */}
       {!user ? (
         <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Login />} />
+          <Route path="/landing" element={<LandingPage />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       ) : (
@@ -73,7 +74,7 @@ function App() {
           {/* Conditionally render the sidebar based on role */}
           {role === "student" && <SidebarStudent />}
           {role === "admin" && <SidebarAdmin />}
-          {role === "HOD" && <SidebarHod />}
+          {role === "hod" && <SidebarHod />}
           {role === "faculty" && <SidebarFac />}
           {role === "doctor" && <SidebarDoc />}
           {/* Main content changes dynamically */}
@@ -81,8 +82,9 @@ function App() {
             
             <Routes>
               {/* Default dashboard route */}
-              <Route path="/dashboard" element={<Navigate to="/dashboard/home" />} />
+              <Route path="/dashboard" element={<Navigate to="/dashboard/profile" />} />
               {/* Protected routes */}
+              <Route path="/dashboard/profile" element={<ProfilePage />} />
               <Route path="/dashboard/home" element={<HomePage />} />
               <Route path="/dashboard/student-info" element={<StudentInfo />} />
               <Route path="/dashboard/election-list" element={<ElectionList />} />
@@ -108,7 +110,7 @@ function App() {
               <Route path="/dashboard/AdminExpenseApproval" element={<AdminExpenseApproval/>} />
 
               {/* Fallback route for logged-in users */}
-              <Route path="*" element={<Navigate to="/dashboard/home" />} />
+              <Route path="*" element={<Navigate to="/dashboard/profile" />} />
             </Routes>
           </div>
         </div>

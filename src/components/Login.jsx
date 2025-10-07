@@ -10,6 +10,21 @@ const Login = () => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Demo credentials for each role
+  const demoCredentials = [
+    { role: "Student", email: "student@demo.com", password: "student123", color: "bg-blue-100 text-blue-800" },
+    { role: "Doctor", email: "doctor@demo.com", password: "doctor123", color: "bg-green-100 text-green-800" },
+    { role: "Admin", email: "admin@demo.com", password: "admin123", color: "bg-red-100 text-red-800" },
+    { role: "Faculty", email: "faculty@demo.com", password: "faculty123", color: "bg-purple-100 text-purple-800" },
+    { role: "HOD", email: "hod@demo.com", password: "hod123", color: "bg-orange-100 text-orange-800" }
+  ];
+
+  const handleDemoLogin = (credential) => {
+    setEmail(credential.email);
+    setPassword(credential.password);
+    setError(null);
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(null);
@@ -26,14 +41,9 @@ const Login = () => {
         const userData = userDoc.data();
         console.log(`Logged in as: ${userData.role}`);
 
-        // Redirect user based on role
-        if (userData.role === "student") {
-          console.log("Redirecting to Student Dashboard");
-        } else if (userData.role === "admin") {
-          console.log("Redirecting to Admin Dashboard");
-        } else {
-          console.log("Redirecting to Default Dashboard");
-        }
+        // The App.jsx will handle routing based on authentication state
+        console.log(`Successfully logged in as: ${userData.role}`);
+        // No manual redirect needed - App.jsx handles this automatically
       } else {
         console.error("User data not found in Firestore!");
         setError("User data not found!");
@@ -129,10 +139,32 @@ const Login = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 0.5 }}
-          className="bg-gray-50 p-6 text-center"
+          className="bg-gray-50 p-6"
         >
-          <p className="text-gray-600">
-           
+          <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">Demo Credentials</h3>
+          <div className="space-y-3">
+            {demoCredentials.map((credential, index) => (
+              <motion.button
+                key={credential.role}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.9 + index * 0.1, duration: 0.3 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => handleDemoLogin(credential)}
+                className={`w-full p-3 rounded-lg border-2 border-transparent hover:border-gray-300 transition-all duration-300 ${credential.color} cursor-pointer`}
+              >
+                <div className="flex justify-between items-center">
+                  <span className="font-medium">{credential.role}</span>
+                  <span className="text-sm opacity-75">
+                    {credential.email} / {credential.password}
+                  </span>
+                </div>
+              </motion.button>
+            ))}
+          </div>
+          <p className="text-xs text-gray-500 text-center mt-4">
+            Click on any credential above to auto-fill the login form
           </p>
         </motion.div>
       </motion.div>
